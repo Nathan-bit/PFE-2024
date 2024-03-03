@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Awesome Sidebar</title>
+    <!-- MDBootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/mdbootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: "Lato", sans-serif;
+        }
+
+        #sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            padding-top: 20px;
+            color: white;
+        }
+
+        #sidebar a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #818181;
+            display: block;
+        }
+
+        #sidebar a:hover {
+            color: #f1f1f1;
+        }
+
+        #sidebar .sub-menu a {
+            padding-left: 64px;
+        }
+
+        #main {
+            margin-left: 250px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <a href="#" data-toggle="collapse" data-target="#menu-etudiant">
+        <i class="fas fa-user-graduate"></i> Etudiant
+    </a>
+    <div id="menu-etudiant" class="collapse">
+        
+    </div>
+
+    <a href="#" data-toggle="collapse" data-target="#menu-stages">
+        <i class="fas fa-briefcase"></i> Stages
+    </a>
+    <div id="menu-stages" class="collapse">
+        <!-- Add Stages sub-menu items here -->
+    </div>
+
+    <a href="#" data-toggle="collapse" data-target="#menu-enseignant">
+        <i class="fas fa-chalkboard-teacher"></i> Enseignant
+    </a>
+    <div id="menu-enseignant" class="collapse">
+        <!-- Add Enseignant sub-menu items here -->
+    </div>
+
+    <a href="#" data-toggle="collapse" data-target="#menu-encadrant">
+        <i class="fas fa-user-tie"></i> Encadrant
+    </a>
+    <div id="menu-encadrant" class="collapse">
+        <!-- Add Encadrant sub-menu items here -->
+    </div>
+
+    <a href="#" data-toggle="collapse" data-target="#menu-gestion">
+        <i class="fas fa-cogs"></i> Gestion
+    </a>
+    <div id="menu-gestion" class="collapse sub-menu">
+        <a href="#"><i class="fas fa-file-upload"></i> Upload Excel Files</a>
+        
+        <a href="#"><i class="fas fa-database"></i> Databases</a>
+    </div>
+</div>
+
+<div id="main">
+    <!-- Your main content goes here -->
+    <h2>Main Content</h2>
+</div>
+
+<!-- MDBootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/mdbootstrap/js/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mdbootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

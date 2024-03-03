@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Excel File</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload Excel File</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Upload</button>
+    </form>
+
+    <% if (data) { %>
+        <h2>Data from Uploaded File</h2>
+        <table>
+            <thead>
+                <tr>
+                    <% data[0].forEach(function(column) { %>
+                        <th><%= column %></th>
+                    <% }) %>
+                </tr>
+            </thead>
+            <tbody>
+                <% data.slice(1).forEach(function(row) { %>
+                    <tr>
+                        <% row.forEach(function(cell) { %>
+                            <td><%= cell %></td>
+                        <% }) %>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+</body>
+</html>
