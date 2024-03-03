@@ -17,10 +17,10 @@
 <body>
     <div class="container">
         <h1 class="mt-5">Upload Excel File</h1>
-        <form class="mt-3" action="/sendfiles/upload" method="post" enctype="multipart/form-data">
+        <form class="mt-3" action="/sendfiles" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="file">Choose Excel File:</label>
-                <input type="file" class="form-control-file" id="file" name="file">
+                <input type="file" class="form-control-file" id="file" name="file" required>
             </div>
             <button type="submit" class="btn btn-primary">Upload</button>
         </form>

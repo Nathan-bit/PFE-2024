@@ -1,2 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Awesome Sidebar</title>
+    <!-- MDBootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/mdbootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: "Lato", sans-serif;
+        }
 
-<body><%- include('./partiales/sidebar') %></body>
+        #sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            padding-top: 20px;
+            color: white;
+        }
+
+        #sidebar a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #818181;
+            display: block;
+        }
+
+        #sidebar a:hover {
+            color: #f1f1f1;
+        }
+
+        #sidebar .sub-menu a {
+            padding-left: 64px;
+        }
+
+        #main {
+            margin-left: 250px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <a href="#etudiant" onclick="renderContent('etudiant')">
+        <i class="fas fa-user-graduate"></i> Etudiant
+    </a>
+
+    <a href="#stages" onclick="renderContent('stages')">
+        <i class="fas fa-briefcase"></i> Stages
+    </a>
+
+    <a href="#enseignant" onclick="renderContent('enseignant')">
+        <i class="fas fa-chalkboard-teacher"></i> Enseignant
+    </a>
+
+    <a href="#encadrant" onclick="renderContent('encadrant')">
+        <i class="fas fa-user-tie"></i> Encadrant
+    </a>
+    <a href="#" data-toggle="collapse" data-target="#menu-gestion">
+        <i class="fas fa-cogs"></i> Gestion
+    </a>
+    <div id="menu-gestion" class="collapse sub-menu">
+        <a href="#uploadexcelfiles"  onclick="renderContent('sendfiles')">
+        <i class="fas fa-file-upload"></i> Upload Excel Files
+        </a>
+        
+        <a href="#database" onclick="renderContent('database')">
+        <i class="fas fa-database"></i> Databases
+        </a>
+    </div>
+</div>
+
+<div id="main">
+    <!-- Your main content goes here -->
+    <h2>Main Content</h2>
+</div>
+
+<script>
+    async function renderContent(item) {
+        var mainContent = document.getElementById('main');
+        // Clear existing content
+        mainContent.innerHTML = '';
+
+        try {
+            // Fetch the content of the corresponding route
+            const response = await fetch(`/${item}`);
+            const text = await response.text();
+            // Render the fetched content in the main area
+            mainContent.innerHTML = text;
+        } catch (error) {
+            console.error('Error fetching content:', error);
+        }
+    }
+</script>
+
+<!-- MDBootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/mdbootstrap/js/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mdbootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
