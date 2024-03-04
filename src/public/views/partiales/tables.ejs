@@ -1,10 +1,16 @@
 
 
 
+
 <% if (Array.isArray(dt) && dt.length > 0) { %>
-    <h2 class="mt-5">Data from Uploaded File</h2>
+    <h2 class="mt-5"></h2>
     <!-- Add container for scrollable table -->
-   
+            <form>
+                <p>   <%- include('bases') %></p>
+                
+                <button type="button" class="btn btn-success" id="saveButton" onclick="saveToDatabase()">
+                <i class="fas fa-save"></i> Save to Database
+            </button></form>
     <div class="table-container">
         <table class="table"   >
             <thead bgcolor="#f0f0f0" style="font-weight: bold;">
@@ -24,11 +30,12 @@
                 <% }) %>
             </tbody>
         </table>
+
+
+
     </div>
 <% } else { %>
     <p class="mt-5">No data available.</p>
 <% } %>
-<button type="button" class="btn btn-success" id="saveButton" onclick="saveToDatabase()">
-    <i class="fas fa-save"></i> Save to Database
-</button>
 
+     

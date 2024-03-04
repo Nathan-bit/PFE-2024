@@ -73,7 +73,7 @@ app.post('/sendfiles', upload.single('file'), async (req, res) => {
             });
 
           //  console.log(excelData);
-            return res.render('uploadexcelfiles', { dt: excelData });
+            return res.render('uploadexcelfiles', { dt: excelData ,items: items});
         } else if (fileType === '.csv') {
             // Read CSV file asynchronously
             const csvData = [];
@@ -94,7 +94,7 @@ app.post('/sendfiles', upload.single('file'), async (req, res) => {
                 .on('end', () => {
                   //  console.log(csvData);
 
-                    res.render('uploadexcelfiles', { dt: csvData });
+                    res.render('uploadexcelfiles', { dt: csvData ,items: items});
                 })
                 .on('error', (err) => {
                     console.error('Error:', err);
@@ -107,8 +107,10 @@ app.post('/sendfiles', upload.single('file'), async (req, res) => {
     }
 });
 
-// Define your routes
-let messages = 'Welcome to our website!';
+app.get('/sendfiles', (req, res) => {
+    res.render('uploadexcelfiles',{dt, items: items });
+});
+
 
 
 app.get('/', (req, res) => {
@@ -136,7 +138,7 @@ let items =[]
 getAllTablesAndStructure()
   .then(tablesStructure => {
         items=tablesStructure
-   console.log('Tables and their structures:', i);
+   //console.log('Tables and their structures:', items);
   })
   .catch(error => {
     console.error('Error:', error);
@@ -148,9 +150,6 @@ getAllTablesAndStructure()
     res.render('./partiales/bases', { items: items }); // Pass the 'items' object to the template
   });
  
-  app.get('/sendfiles', (req, res) => {
-    res.render('uploadexcelfiles');
-});
 
 app.listen(port, () => {
     console.log(`Server is listening on port http://localhost:${port}`);

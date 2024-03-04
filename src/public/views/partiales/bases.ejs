@@ -1,0 +1,56 @@
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4"></h1>
+        
+        <div class="form-group">
+            <label for="menu">Selectioner la table à utiliser:</label>
+            <select id="menu" onchange="showContents()">
+                <option value="" selected disabled>Selectionner  la table</option>
+                <% Object.keys(items).forEach(function(key) { %>
+                    <option value="<%= key %>"><%= key %></option>
+                <% }); %>
+            </select>
+        </div>
+        
+        <div id="contents">
+            <!-- Contents will be displayed here -->
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function showContents() {
+            var menu = document.getElementById("menu");
+            var selectedValue = menu.value;
+            var contentsDiv = document.getElementById("contents");
+            var items = <%- JSON.stringify(items) %>; // Accessing the 'items' object
+            
+            if (selectedValue === "") {
+                contentsDiv.innerHTML = "<p>Please select a table.</p>";
+                return;
+            }
+
+            var contents = items[selectedValue];
+
+            if (contents) {
+                var contentsHTML = "<h2>Le Schema de la table  " + selectedValue + "</h2><div class='table-responsive'><table class='table table-bordered'><tr>";
+                contents.forEach(function(item) {
+                    contentsHTML += "<td>" + item + "</td>";
+                });
+                contentsHTML += "</tr></table></div>";
+                contentsDiv.innerHTML = contentsHTML;
+            } else {
+                contentsDiv.innerHTML = "<p>No contents available for this item.</p>";
+            }
+        }
+    </script>
+</body>
+

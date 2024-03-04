@@ -3,14 +3,14 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
 // Replace 'database_name', 'username', 'password', and 'host' with your MySQL database credentials
-const sequelize = new Sequelize('data', 'root', '', {
+const sequelize = new Sequelize('stb', 'root', '', {
   host: 'localhost',
   dialect: 'mysql',
   port : 3306
 });
 
 // Define the Employee model
-const Employee = sequelize.define('Employee12', {
+const Employee = sequelize.define('Employers', {
   ID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -33,8 +33,35 @@ const Employee = sequelize.define('Employee12', {
     type: DataTypes.DATE
   }
 }, {
-  tableName: 'employee12', // Change this according to your table name
+  tableName: 'Employers', // Change this according to your table name
   timestamps: true // Set to true if you want Sequelize to manage createdAt and updatedAt fields
+});
+
+const Etudiant = sequelize.define('Etudiant', {
+  ID: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  Nom: {
+    type: DataTypes.STRING
+  },
+  Prenom: {
+    type: DataTypes.STRING
+  },
+  Departement: {
+    type: DataTypes.STRING
+  },
+  Email: {
+    type: DataTypes.STRING,
+    unique:true
+  },
+  Date: {
+    type: DataTypes.DATE
+  }
+}, {
+  tableName: 'Etudiant', // Change this according to your table name
+  timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt fields
 });
 
 // Function to get all tables and their structures
@@ -88,6 +115,7 @@ async function connectToDatabase() {
 async function syncModel() {
   try {
     await Employee.sync({ alter: true });
+    await Etudiant.sync({ alter: true });
     console.log("Employee model synced");
   } catch (error) {
     console.error('Error syncing Employee model:', error);
@@ -99,6 +127,6 @@ connectToDatabase();
 syncModel();
 
 module.exports = {
-  Employee,
+  Employee,Etudiant,
   getAllTablesAndStructure
 };

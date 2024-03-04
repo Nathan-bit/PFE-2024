@@ -1,0 +1,38 @@
+<% if (Array.isArray(dt) && dt.length > 0) { %>
+    <h2 class="mt-5"></h2>
+    <div class="table-container">
+        <table class="table"   >
+            <thead bgcolor="#f0f0f0" style="font-weight: bold;">
+                <tr>
+                    <% Object.keys(dt[0]).forEach(function(key) { %>
+                        <th scope="col">
+                            <input type="text" value="<%= key %>" onchange="updateHeader(this)">
+                        </th>
+                    <% }) %>
+                </tr>
+            </thead>
+            <tbody>
+                <% dt.forEach(function(row) { %>
+                    <tr>
+                        <% Object.values(row).forEach(function(value) { %>
+                            <td><%= value %></td>
+                        <% }) %>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+<% } %>
+
+<script>
+    function updateHeader(input) {
+        // Get the text value entered in the input field
+        var newValue = input.value;
+        
+        // Find the index of the column header in the table
+        var columnIndex = Array.from(input.parentNode.parentNode.children).indexOf(input.parentNode);
+        
+        // Update the corresponding table header
+        document.querySelectorAll('.table-container table th')[columnIndex].innerText = newValue;
+    }
+</script>
