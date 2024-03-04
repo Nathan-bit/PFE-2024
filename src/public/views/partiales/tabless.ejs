@@ -3,7 +3,7 @@
     <form>
         <p>   <%- include('bases') %></p>
         
-        <button type="button" class="btn btn-success" id="saveButton" onclick="saveToDatabase()">
+        <button type="button" class="btn btn-success" id="saveButton" onclick="saveTable()">
         <i class="fas fa-save"></i> Save to Database
     </button></form>
     <div class="table-container">
@@ -59,4 +59,32 @@
         div.style.display = 'block';
         input.style.display = 'none';
     }
+
+    function saveTable() {
+        var headers = [];
+        var data = [];
+
+        // Get all table headers
+        document.querySelectorAll('thead th').forEach(function(th) {
+            var headerText = th.innerText.trim(); // Trim to remove leading/trailing whitespace
+            if (headerText !== "") {
+                headers.push(headerText);
+            }
+        });
+
+        // Get all table rows
+        document.querySelectorAll('tbody tr').forEach(function(tr) {
+            var rowData = {};
+            tr.querySelectorAll('td').forEach(function(td, index) {
+                if (headers[index]) {
+                    rowData[headers[index]] = td.innerText;
+                }
+            });
+            data.push(rowData);
+        });
+
+        // Output the saved table object to console (you can modify this to send it to the server, etc.)
+        console.log({ headers: headers, data: data });
+    }
+    
 </script>
