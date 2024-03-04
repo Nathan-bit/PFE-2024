@@ -6,6 +6,7 @@ const xlsx = require('xlsx');
 const multer = require('multer');
 const csvParser = require('csv-parser');
 const bodyParser = require('body-parser');
+const unidecode = require('unidecode');
 const { Employee, getAllTablesAndStructure }  = require('./src/public/model/models');
 const { Sequelize } = require('sequelize');
 
@@ -57,63 +58,54 @@ app.post('/sendfiles', upload.single('file'), async (req, res) => {
             // Convert first sheet to JSON
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
-            const excelData = xlsx.utils.sheet_to_json(worksheet);
+            let excelData = xlsx.utils.sheet_to_json(worksheet);
+
+            // Apply unidecode to keys
+            excelData = excelData.map((row) => {
+                const transformedRow = {};
+                for (const key in row) {
+                    if (row.hasOwnProperty(key)) {
+                        const newKey = unidecode(key).replace(/[^\w\s]/gi, ''); // Remove special characters and convert accented characters
+                        transformedRow[newKey] = row[key];
+                    }
+                }
+                return transformedRow;
+            });
 
             console.log(excelData);
             return res.render('uploadexcelfiles', { dt: excelData });
         } else if (fileType === '.csv') {
             // Read CSV file asynchronously
             const csvData = [];
-            const fileStream = fs.createReadStream(file.path);
 
-            fileStream.pipe(csvParser())
+            fs.createReadStream(file.path, { encoding: 'latin1' })
+                .pipe(csvParser())
                 .on('data', (row) => {
-                    csvData.push(row);
-                });
-
-            await new Promise((resolve, reject) => {
-                fileStream.on('end', () => {
+                    // Remove special characters and convert accented characters
+                    const transformedRow = {};
+                    for (const key in row) {
+                        if (row.hasOwnProperty(key)) {
+                            const newKey = unidecode(key).replace(/[^\w\s]/gi, ''); // Remove special characters and convert accented characters
+                            transformedRow[newKey] = row[key];
+                        }
+                    }
+                    csvData.push(transformedRow);
+                })
+                .on('end', () => {
                     console.log(csvData);
-                    res.render('uploadexcelfiles', { dt: csvData });
-                    resolve();
-                });
 
-                fileStream.on('error', (err) => {
-                    reject(err);
+                    res.render('uploadexcelfiles', { dt: csvData });
+                })
+                .on('error', (err) => {
+                    console.error('Error:', err);
+                    return res.status(500).send('Error while processing file.');
                 });
-            });
         }
     } catch (err) {
         console.error('Error:', err);
         return res.status(500).send('Error while processing file.');
     }
 });
-
-// Example route to retrieve all employees
-app.get('/employees', async (req, res) => {
-    try {
-      const employees = await Employee.findAll();
-      res.json(employees);
-    } catch (error) {
-      console.error('Error fetching employees:', error);
-      res.status(500).json({ error: 'Error fetching employees' });
-    }
-  });
-  
-  // Example route to create a new employee
-  app.post('/employees', async (req, res) => {
-    const { Nom, Prenom, Departement, Email, Date } = req.body;
-    try {
-      const newEmployee = await Employee.create({ Nom, Prenom, Departement, Email, Date });
-      res.status(201).json(newEmployee);
-    } catch (error) {
-      console.error('Error creating employee:', error);
-      res.status(500).json({ error: 'Error creating employee' });
-    }
-  });
-
-
-
 app.get('/sendfiles', (req, res) => {
     res.render('uploadexcelfiles', { dt });
 });

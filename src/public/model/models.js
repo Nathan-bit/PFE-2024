@@ -10,7 +10,7 @@ const sequelize = new Sequelize('data', 'root', '', {
 });
 
 // Define the Employee model
-const Employee = sequelize.define('Employee', {
+const Employee = sequelize.define('Employee12', {
   ID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -26,50 +26,52 @@ const Employee = sequelize.define('Employee', {
     type: DataTypes.STRING
   },
   Email: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    unique:true
   },
   Date: {
     type: DataTypes.DATE
   }
 }, {
-  tableName: 'employee', // Change this according to your table name
+  tableName: 'employee12', // Change this according to your table name
   timestamps: true // Set to true if you want Sequelize to manage createdAt and updatedAt fields
 });
 
 // Function to get all tables and their structures
 async function getAllTablesAndStructure() {
-    try {
+  try {
       // Retrieve table names and their column names
-      const [tablesAndColumns] = await sequelize.query(`
-        SELECT table_name, column_name
-        FROM information_schema.columns
-        WHERE table_schema = :databaseName;
+      const tablesAndColumns = await sequelize.query(`
+          SELECT table_name, column_name
+          FROM information_schema.columns
+          WHERE table_schema = :databaseName;
       `, {
-        replacements: { databaseName: sequelize.config.database },
-        type: sequelize.QueryTypes.SELECT
+          replacements: { databaseName: sequelize.config.database },
+          type: sequelize.QueryTypes.SELECT
       });
-  
+
       // Ensure we have some data returned
       if (!Array.isArray(tablesAndColumns) || tablesAndColumns.length === 0) {
-        throw new Error('Failed to retrieve table names and their columns');
+          throw new Error('No tables and columns found');
       }
-  
+
       // Group the columns by table name
       const tablesStructure = {};
       tablesAndColumns.forEach(row => {
-        const { table_name, column_name } = row;
-        if (!tablesStructure[table_name]) {
-          tablesStructure[table_name] = [];
-        }
-        tablesStructure[table_name].push(column_name);
+          const { table_name, column_name } = row;
+          if (!tablesStructure[table_name]) {
+              tablesStructure[table_name] = [];
+          }
+          tablesStructure[table_name].push(column_name);
       });
-  
+
       return tablesStructure;
-    } catch (error) {
-      console.error('Error fetching tables and their columns:', error);
+  } catch (error) {
+      console.error('Error fetching tables and their columns:', error.message);
       return null;
-    }
   }
+}
+
   
 
 // Establish connection to the database
