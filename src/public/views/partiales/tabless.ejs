@@ -1,0 +1,62 @@
+<% if (Array.isArray(dt) && dt.length > 0) { %>
+    <h2 class="mt-5"></h2>
+    <form>
+        <p>   <%- include('bases') %></p>
+        
+        <button type="button" class="btn btn-success" id="saveButton" onclick="saveToDatabase()">
+        <i class="fas fa-save"></i> Save to Database
+    </button></form>
+    <div class="table-container">
+        <table class="table"   >
+            <thead bgcolor="#f0f0f0" style="font-weight: bold;">
+                <tr>
+                    <% Object.keys(dt[0]).forEach(function(key) { %>
+                        <th scope="col" onclick="makeEditable(this)">
+                            <div class="editable" style="display: block;"><%= key %></div>
+                            <input type="text" class="editable" style="display: none;" value="<%= key %>">
+                        </th>
+                    <% }) %>
+                </tr>
+            </thead>
+            <tbody>
+                <% dt.forEach(function(row) { %>
+                    <tr>
+                        <% Object.values(row).forEach(function(value) { %>
+                            <td><%= value %></td>
+                        <% }) %>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+<% } %>
+
+<script>
+    function makeEditable(cell) {
+        var div = cell.querySelector('.editable');
+        var input = cell.querySelector('input');
+
+        // Toggle visibility of div and input
+        div.style.display = 'none';
+        input.style.display = 'block';
+
+        // Focus input and select its content
+        input.focus();
+        input.select();
+
+        // When input loses focus, update the header
+        input.addEventListener('blur', function() {
+            updateHeader(cell, input.value);
+        });
+    }
+
+    function updateHeader(cell, newValue) {
+        var div = cell.querySelector('.editable');
+        var input = cell.querySelector('input');
+
+        // Update the text in the div and hide the input
+        div.innerText = newValue;
+        div.style.display = 'block';
+        input.style.display = 'none';
+    }
+</script>
