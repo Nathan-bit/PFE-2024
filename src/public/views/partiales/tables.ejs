@@ -1,0 +1,33 @@
+
+
+
+<% if (Array.isArray(dt) && dt.length > 0) { %>
+    <h2 class="mt-5">Data from Uploaded File</h2>
+    <!-- Add container for scrollable table -->
+   
+    <div class="table-container">
+        <table class="table"   >
+            <thead bgcolor="#f0f0f0" style="font-weight: bold;">
+                <tr>
+                    <% Object.keys(dt[0]).forEach(function(key) { %>
+                        <th scope="col"><%= key %></th>
+                    <% }) %>
+                </tr>
+            </thead>
+            <tbody>
+                <% dt.forEach(function(row) { %>
+                    <tr>
+                        <% Object.values(row).forEach(function(value) { %>
+                            <td><%= value %></td>
+                        <% }) %>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+<% } else { %>
+    <p class="mt-5">No data available.</p>
+<% } %>
+<button type="button" class="btn btn-success" id="saveButton" onclick="saveToDatabase()">
+    <i class="fas fa-save"></i> Save to Database
+</button>
