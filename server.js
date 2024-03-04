@@ -72,7 +72,7 @@ app.post('/sendfiles', upload.single('file'), async (req, res) => {
                 return transformedRow;
             });
 
-            console.log(excelData);
+          //  console.log(excelData);
             return res.render('uploadexcelfiles', { dt: excelData });
         } else if (fileType === '.csv') {
             // Read CSV file asynchronously
@@ -92,7 +92,7 @@ app.post('/sendfiles', upload.single('file'), async (req, res) => {
                     csvData.push(transformedRow);
                 })
                 .on('end', () => {
-                    console.log(csvData);
+                  //  console.log(csvData);
 
                     res.render('uploadexcelfiles', { dt: csvData });
                 })
@@ -106,15 +106,10 @@ app.post('/sendfiles', upload.single('file'), async (req, res) => {
         return res.status(500).send('Error while processing file.');
     }
 });
-app.get('/sendfiles', (req, res) => {
-    res.render('uploadexcelfiles', { dt });
-});
 
 // Define your routes
 let messages = 'Welcome to our website!';
-app.get('/home', (req, res) => {
-    res.render('home');
-});
+
 
 app.get('/', (req, res) => {
     res.render('home');
@@ -137,14 +132,26 @@ sidebarItems.forEach(item => {
     });
 });
 // Start the server
+let items =[]
 getAllTablesAndStructure()
   .then(tablesStructure => {
-    console.log('Tables and their structures:', tablesStructure);
+        items=tablesStructure
+   console.log('Tables and their structures:', i);
   })
   .catch(error => {
     console.error('Error:', error);
   });
 
+  
+  // Route to render the EJS template
+  app.get('/minimenu', (req, res) => {
+    res.render('./partiales/bases', { items: items }); // Pass the 'items' object to the template
+  });
+ 
+  app.get('/sendfiles', (req, res) => {
+    res.render('uploadexcelfiles');
+});
+
 app.listen(port, () => {
-    console.log(`Server is listening on port ${port}`);
+    console.log(`Server is listening on port http://localhost:${port}`);
 });
