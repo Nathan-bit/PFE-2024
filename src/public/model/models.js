@@ -52,6 +52,9 @@ const Etudiant = sequelize.define('Etudiant', {
   Departement: {
     type: DataTypes.STRING
   },
+  Sexe: {
+    type: DataTypes.STRING
+  },
   Email: {
     type: DataTypes.STRING,
     unique:true
@@ -60,8 +63,8 @@ const Etudiant = sequelize.define('Etudiant', {
     type: DataTypes.DATE
   }
 }, {
-  tableName: 'Etudiant', // Change this according to your table name
-  timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt fields
+  tableName: ['enseignants','enc','pops'],// Change this according to your table name
+  timestamps: true // Set to true if you want Sequelize to manage createdAt and updatedAt fields
 });
 
 // Function to get all tables and their structures

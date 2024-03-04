@@ -8,7 +8,7 @@
         
         <div class="form-group">
             <label for="menu">voir les tables existant:</label>
-            <select id="menu" onchange="showContents()">
+            <select id="menu" onchange="showContents()" onchange=" getSelectedValue()">
                 <option value="" selected disabled>Selectionner  la table</option>
                 <% Object.keys(items).forEach(function(key) { %>
                     <option value="<%= key %>"><%= key %></option>
@@ -49,8 +49,11 @@
                 contentsDiv.innerHTML = contentsHTML;
             } else {
                 contentsDiv.innerHTML = "<p>No contents available for this item.</p>";
-            }
+            } 
+            console.log(selectedValue)
+            return selectedValue;
         }
     </script>
+               
 </body>
 

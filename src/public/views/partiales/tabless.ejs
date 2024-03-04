@@ -1,11 +1,13 @@
 <% if (Array.isArray(dt) && dt.length > 0) { %>
-    <h2 class="mt-5"></h2>
     <form>
         <p>   <%- include('bases') %></p>
         
-        <button type="button" class="btn btn-success" id="saveButton" onclick="saveTable()">
+       </form>
+
+    <h2 class="mt-5"  style="text-align: center;">Data from upload files</h2>
+    <button type="button" class="btn btn-success" id="saveButton" onclick="saveTable()">
         <i class="fas fa-save"></i> Save to Database
-    </button></form>
+    </button>
     <div class="table-container">
         <table class="table"   >
             <thead bgcolor="#f0f0f0" style="font-weight: bold;">
@@ -61,30 +63,56 @@
     }
 
     function saveTable() {
-        var headers = [];
-        var data = [];
+    var headers = [];
+    var data = [];
 
-        // Get all table headers
-        document.querySelectorAll('thead th').forEach(function(th) {
-            var headerText = th.innerText.trim(); // Trim to remove leading/trailing whitespace
-            if (headerText !== "") {
-                headers.push(headerText);
+    // Get all table headers
+    document.querySelectorAll('thead th').forEach(function(th) {
+        var headerText = th.innerText.trim(); // Trim to remove leading/trailing whitespace
+        if (headerText !== "") {
+            headers.push(headerText);
+        }
+    });
+
+    // Get all table rows
+    var tableRows = document.querySelectorAll('tbody tr');
+    var totalRows = tableRows.length;
+    var processedRows = 0;
+
+    tableRows.forEach(function(tr) {
+        var rowData = {};
+        tr.querySelectorAll('td').forEach(function(td, index) {
+            if (headers[index]) {
+                rowData[headers[index]] = td.innerText;
             }
         });
+        data.push(rowData);
+        processedRows++;
 
-        // Get all table rows
-        document.querySelectorAll('tbody tr').forEach(function(tr) {
-            var rowData = {};
-            tr.querySelectorAll('td').forEach(function(td, index) {
-                if (headers[index]) {
-                    rowData[headers[index]] = td.innerText;
-                }
-            });
-            data.push(rowData);
-        });
+        // Check if all rows are processed
+        if (processedRows === totalRows) {
+            sendDataToServer(data);
+        }
+    });
+}
 
-        // Output the saved table object to console (you can modify this to send it to the server, etc.)
-        console.log({ headers: headers, data: data });
-    }
+function sendDataToServer(data) {
+    // Send data to the server using AJAX
+    $.ajax({
+        url: '/saveToDatabase', // Replace with your server-side endpoint URL
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function(response) {
+      
+            console.log("Data saved successfully:", response);
+        },
+        error: function(xhr, status, error) {
+            // Handle error
+            
+            console.error("Error saving data:", error);
+        }
+    });
+}
     
 </script>
