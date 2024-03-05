@@ -1,14 +1,14 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
 // Replace 'database_name', 'username', 'password', and 'host' with your MySQL database credentials
-const sequelize = new Sequelize('data', 'root', '', {
+const sequelize = new Sequelize('stb', 'root', '', {
   host: 'localhost',
   dialect: 'mysql',
   port: 3306
 });
 
 // Define the Employee model
-const Employees = sequelize.define('Employers', {
+const Employers = sequelize.define('Employers', {
   ID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -32,11 +32,11 @@ const Employees = sequelize.define('Employers', {
     type: DataTypes.DATE
   }
 }, {
-  tableName: 'Employers', // Change this according to your table name
-  timestamps: true, // Set to true if you want Sequelize to manage createdAt and updatedAt fields
+  //tableName: 'Employers', // Change this according to your table name
+  timestamps: false, // Set to true if you want Sequelize to manage createdAt and updatedAt fields
 });
 
-const Etudiant = sequelize.define('Etudiant', {
+const Etudiant = sequelize.define('Etudiants', {
   ID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -61,7 +61,7 @@ const Etudiant = sequelize.define('Etudiant', {
     type: DataTypes.DATE
   }
 }, {
-  // tableName: 'pops',// Change this according to your table name
+  tableName: 'Etudiant',// Change this according to your table name
   timestamps: true // Set to true if you want Sequelize to manage createdAt and updatedAt fields
 });
 
@@ -95,7 +95,7 @@ async function getAllTablesAndStructure() {
 
     return tablesStructure;
   } catch (error) {
-    console.error('Error fetching tables and their columns:', error.message);
+   // console.error('Error fetching tables and their columns:', error.message);
     return null;
   }
 }
@@ -113,7 +113,7 @@ async function connectToDatabase() {
 // Sync the model with the database
 async function syncModel() {
   try {
-    await Employees.sync({ alter: true });
+    await Employers.sync({ alter: true });
     await Etudiant.sync({ alter: true });
 
   } catch (error) {
@@ -123,10 +123,10 @@ async function syncModel() {
 
 sequelize.sync()
   .then(() => {
-    console.log('Database & tables synced');
+   // console.log('Database & tables synced');
   })
   .catch(err => {
-    console.error('Error syncing database:', err);
+   // console.error('Error syncing database:', err);
   });
 
 // Call the functions to connect and sync the model
@@ -134,6 +134,6 @@ connectToDatabase();
 syncModel();
 
 module.exports = {
-  Employees, Etudiant,
+  Employers, Etudiant,
   getAllTablesAndStructure
 };

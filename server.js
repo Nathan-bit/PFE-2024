@@ -7,11 +7,27 @@ const multer = require('multer');
 const csvParser = require('csv-parser');
 const bodyParser = require('body-parser');
 const unidecode = require('unidecode');
-const {   Employees, Etudiant , getAllTablesAndStructure }  = require('./src/public/model/models');
-const { Sequelize } = require('sequelize');
+const {   Employers, Etudiant , getAllTablesAndStructure }  = require('./src/public/model/models');
+const mysql = require('mysql');
+const moment = require('moment');
 
 const app = express();
 const port = 3000;
+
+const connection = mysql.createConnection({
+    user: 'root',
+    host: 'localhost',
+    database: 'stb',
+    password: '',
+    port: 3306,
+  });
+  connection.connect((err) => {
+    if (err) {
+      console.error('Error connecting to MySQL database: ', err);
+      return;
+    }
+    console.log('Connected to MySQL database');
+  });
 
 // Middleware
 app.use(bodyParser.json());
@@ -145,39 +161,50 @@ getAllTablesAndStructure()
   });
 
   
-  // Route to render the EJS template
-  /* app.get('/fade', (req, res) => {
-    res.render('./partiales/fade', { items: items }); // Pass the 'items' object to the template
-  });
-  */
   app.post('/saveToDatabase', async (req, res) => {
-    const { Data, Options,TableName  } = req.body;
-const Model = TableName === 'employee' ? Employees : Etudiant;
-      console.log(Data,Options,TableName);
-    // Assuming Data is an array of objects you want to insert/update
     try {
-        if (Options == '1') {
-            // Insert new data only
-            await Model.bulkCreate(Data);
-            res.status(200).json({ message: 'Data inserted successfully' });
-        } else if (Options == '2') {
-            // Insert new data and update old data
-            await Model.bulkCreate(Data, {
-                updateOnDuplicate: ['value'] // Replace 'value' with the actual field you want to update on duplicate
-            });
-            res.status(200).json({ message: 'Data inserted and updated successfully' });
-        } else {
-            res.status(400).json({ message: 'Invalid Options value' });
+      // Extract data from the request body
+      const { Data, Options, TableName } = req.body;
+  
+      // Construct the SQL query based on Options
+      let sqlQuery;
+      if (Options == '1') {
+        // Insert new data only
+        sqlQuery = `INSERT INTO ${TableName} (${Object.keys(Data[0]).join(', ')}) VALUES ?`;
+      } else if (Options =='2') {
+        // Insert new data and update old data
+        sqlQuery = `INSERT INTO ${TableName} (${Object.keys(Data[0]).join(', ')}) VALUES ? ON DUPLICATE KEY UPDATE `;
+        const updateValues = Object.keys(Data[0]).map(key => `${key} = VALUES(${key})`).join(', ');
+        sqlQuery += updateValues;
+      } else {
+        // Respond with error message for invalid Options
+        return res.status(400).json({ message: 'Invalid Options value' });
+      }
+  
+      // Format dates to MySQL date format
+      const formattedData = Data.map(item => {
+        const formattedItem = { ...item };
+        // Assuming 'Date' field is the date that needs formatting
+        if (formattedItem.Date) {
+          formattedItem.Date = moment(formattedItem.Date, 'MM/DD/YY HH:mm').format('YYYY-MM-DD HH:mm:ss');
         }
+        return formattedItem;
+      });
+  
+      // Execute the SQL query
+      connection.query(sqlQuery, [formattedData.map(item => Object.values(item))], (error, results, fields) => {
+        if (error) {
+          // Respond with error message
+          return res.status(500).json({ message: 'Error saving data', error: error.message });
+        }
+        // Sending response after query execution
+        res.status(200).json({ message: 'Data inserted and updated successfully' });
+      });
     } catch (error) {
-        console.error("Error saving data:", error);
-        res.status(500).json({ message: 'Internal Server Error' });
+      // Respond with error message
+      res.status(500).json({ message: 'Error saving data', error: error.message });
     }
-});
-
-  
-  
-
+  });
 
 app.listen(port, () => {
     console.log(`Server is listening on port http://localhost:${port}`);
