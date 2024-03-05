@@ -146,10 +146,10 @@ getAllTablesAndStructure()
 
   
   // Route to render the EJS template
-  app.get('/fade', (req, res) => {
+  /* app.get('/fade', (req, res) => {
     res.render('./partiales/fade', { items: items }); // Pass the 'items' object to the template
   });
- 
+  */
 
 app.listen(port, () => {
     console.log(`Server is listening on port http://localhost:${port}`);

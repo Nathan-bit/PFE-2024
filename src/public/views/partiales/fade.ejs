@@ -28,7 +28,7 @@
        <!--  Your changes have been saved successfully. -->
 
         <div class="form-group">
-            <label for="menu">Choisir la table :</label>
+            <label for="menu">Choisir la table où souvegarder les donées :</label>
             <select id="menu"                                    >
                 <option value="" selected disabled>Selectionner  la table</option>
                 <% Object.keys(items).forEach(function(key) { %>
@@ -38,13 +38,13 @@
         </div>
 
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="1" checked>
           <label class="form-check-label" for="exampleRadios1">
            Ajouter uniquement les nouvelles données
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="2">
           <label class="form-check-label" for="exampleRadios2">
            Ajouter les nouvelles et  mettre à jours les anciennes données
           </label>
@@ -53,7 +53,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <!-- Send button -->
-        <button type="button" class="btn btn-success"  onclick="logSelectedValue() ; getSelectedValue();">Send</button>
+        <button type="button" class="btn btn-success"  onclick="SaveAndSend()">Send</button>
       </div>
     </div>
   </div>
@@ -65,17 +65,50 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
-  function logSelectedValue() {
-    var selectedOption = document.querySelector('input[name="exampleRadios"]:checked').value;
-    console.log("Selected Value:", selectedOption);
-  }
-        function getSelectedValue() {
-            var menu = document.getElementById("menu");
-            var selectedValue = menu.value;
-            console.log("Selected table:", selectedValue);
-        }
+    function SaveAndSend(){
+        var data = saveTable() ;   
+        var options = getSelectedOption();
+        var tableName = getSelectedValue();
+             console.log("data before save",data);
+       function Send(data,options,tableName) {
+      
 
+        $.ajax({
+            url: '/saveToDatabase', // Replace with your server-side endpoint URL
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                objectData: data,
+                integerData: options,
+                stringData: tableName
+            }),
+            success: function(response) {
+                
+                console.log("Data saved successfully:", response);
+            },
+            error: function(xhr, status, error) {
+             
+                console.error("Error saving data:", error);
+            }
+        });
+    }
+
+    function getSelectedOption() {
+        var selectedOption = document.querySelector('input[name="exampleRadios"]:checked').value;
+        console.log("Selected Value:", selectedOption);
+        return selectedOption;
+    }
+
+    function getSelectedValue() {
+        var menu = document.getElementById("menu");
+        var selectedValue = menu.value;
+        console.log("Selected table:", selectedValue);
+ 
+        return selectedValue;
+    }
+}
 </script>
+
 
 </body>
 </html>

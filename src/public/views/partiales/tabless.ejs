@@ -6,7 +6,7 @@
 
     <h2 class="mt-5"  style="text-align: center;">Data from upload files</h2>
     <button type="button" class="btn btn-success" id="saveButton" onclick="saveTable()" data-toggle="modal" data-target="#exampleModal">
-        <i class="fas fa-save"></i> Save to Database
+        <i class="fas fa-save"></i> Save table modification
     </button>
 
     <%- include('fade') %>
@@ -66,57 +66,40 @@
     }
 
     function saveTable() {
-    var headers = [];
-    var data = [];
+        var headers = [];
+        var data = [];
 
-    // Get all table headers
-    document.querySelectorAll('thead th').forEach(function(th) {
-        var headerText = th.innerText.trim(); // Trim to remove leading/trailing whitespace
-        if (headerText !== "") {
-            headers.push(headerText);
-        }
-    });
-
-    // Get all table rows
-    var tableRows = document.querySelectorAll('tbody tr');
-    var totalRows = tableRows.length;
-    var processedRows = 0;
-
-    tableRows.forEach(function(tr) {
-        var rowData = {};
-        tr.querySelectorAll('td').forEach(function(td, index) {
-            if (headers[index]) {
-                rowData[headers[index]] = td.innerText;
+        // Get all table headers
+        document.querySelectorAll('thead th').forEach(function(th) {
+            var headerText = th.innerText.trim(); // Trim to remove leading/trailing whitespace
+            if (headerText !== "") {
+                headers.push(headerText);
             }
         });
-        data.push(rowData);
-        processedRows++;
 
-        // Check if all rows are processed
-        if (processedRows === totalRows) {
-          /*   sendDataToServer(data); */
-          console.log(data);
-        }
-    });
-}
+        // Get all table rows
+        var tableRows = document.querySelectorAll('tbody tr');
+        var totalRows = tableRows.length;
+        var processedRows = 0;
 
-function sendDataToServer(data) {
-    // Send data to the server using AJAX
-    $.ajax({
-        url: '/saveToDatabase', // Replace with your server-side endpoint URL
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        success: function(response) {
-      
-            console.log("Data saved successfully:", response);
-        },
-        error: function(xhr, status, error) {
-            // Handle error
-            
-            console.error("Error saving data:", error);
-        }
-    });
-}
+        tableRows.forEach(function(tr) {
+            var rowData = {};
+            tr.querySelectorAll('td').forEach(function(td, index) {
+                if (headers[index]) {
+                    rowData[headers[index]] = td.innerText;
+                }
+            });
+            data.push(rowData);
+            processedRows++;
+
+            // Check if all rows are processed
+            if (processedRows === totalRows) {
+              
+                // Call Send function after data is populated
+            }
+        });
+        return data
+    }
+
     
 </script>

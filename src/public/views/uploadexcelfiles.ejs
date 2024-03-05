@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Excel File</title>
     <!-- Include Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+ <!-- MDBootstrap CSS -->
+ <link href="https://cdn.jsdelivr.net/npm/mdbootstrap/css/bootstrap.min.css" rel="stylesheet">
+ <!-- Font Awesome CSS -->
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         /* Set fixed height and make tbody scrollable */
         .table-container {
@@ -25,7 +28,7 @@
                 <input type="file" class="form-control-file" id="file" name="file" required accept=".csv, .xlsx">
             </div>
             
-            <button type="button" class="btn btn-primary" id="uploadButton" onclick="validateAndUpload()">
+            <button type="button" class="btn btn-dark" id="uploadButton" onclick="validateAndUpload()">
                 <i class="fas fa-upload"></i> Upload
             </button>
           
@@ -44,7 +47,7 @@
                
     <!-- Include Bootstrap JS and jQuery from CDN -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.9/dist/umd/popper.min.js"></script>
+  <!--   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.9/dist/umd/popper.min.js"></script> -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mdbootstrap/js/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mdbootstrap/js/bootstrap.min.js"></script>
