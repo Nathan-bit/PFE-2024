@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save and Send Button with Modal</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Save
+</button> -->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Save Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       <!--  Your changes have been saved successfully. -->
+
+        <div class="form-group">
+            <label for="menu">Choisir la table :</label>
+            <select id="menu"                                    >
+                <option value="" selected disabled>Selectionner  la table</option>
+                <% Object.keys(items).forEach(function(key) { %>
+                    <option value="<%= key %>"><%= key %></option>
+                <% }); %>
+            </select>
+        </div>
+
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+          <label class="form-check-label" for="exampleRadios1">
+           Ajouter uniquement les nouvelles données
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+          <label class="form-check-label" for="exampleRadios2">
+           Ajouter les nouvelles et  mettre à jours les anciennes données
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <!-- Send button -->
+        <button type="button" class="btn btn-success"  onclick="logSelectedValue() ; getSelectedValue();">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS (Optional) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+  function logSelectedValue() {
+    var selectedOption = document.querySelector('input[name="exampleRadios"]:checked').value;
+    console.log("Selected Value:", selectedOption);
+  }
+        function getSelectedValue() {
+            var menu = document.getElementById("menu");
+            var selectedValue = menu.value;
+            console.log("Selected table:", selectedValue);
+        }
+
+</script>
+
+</body>
+</html>

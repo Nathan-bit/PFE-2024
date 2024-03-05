@@ -5,9 +5,12 @@
        </form>
 
     <h2 class="mt-5"  style="text-align: center;">Data from upload files</h2>
-    <button type="button" class="btn btn-success" id="saveButton" onclick="saveTable()">
+    <button type="button" class="btn btn-success" id="saveButton" onclick="saveTable()" data-toggle="modal" data-target="#exampleModal">
         <i class="fas fa-save"></i> Save to Database
     </button>
+
+    <%- include('fade') %>
+        
     <div class="table-container">
         <table class="table"   >
             <thead bgcolor="#f0f0f0" style="font-weight: bold;">
@@ -91,7 +94,8 @@
 
         // Check if all rows are processed
         if (processedRows === totalRows) {
-            sendDataToServer(data);
+          /*   sendDataToServer(data); */
+          console.log(data);
         }
     });
 }

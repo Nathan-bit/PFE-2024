@@ -146,8 +146,8 @@ getAllTablesAndStructure()
 
   
   // Route to render the EJS template
-  app.get('/minimenu', (req, res) => {
-    res.render('./partiales/bases', { items: items }); // Pass the 'items' object to the template
+  app.get('/fade', (req, res) => {
+    res.render('./partiales/fade', { items: items }); // Pass the 'items' object to the template
   });
  
 
