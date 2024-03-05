@@ -70,9 +70,7 @@
         var options = getSelectedOption();
         var tableName = getSelectedValue();
              console.log("data before save",data);
-       function Send(data,options,tableName) {
-      
-
+      // function Send(data,options,tableName) {
         $.ajax({
             url: '/saveToDatabase', // Replace with your server-side endpoint URL
             method: 'POST',
@@ -91,7 +89,7 @@
                 console.error("Error saving data:", error);
             }
         });
-    }
+   // }
 
     function getSelectedOption() {
         var selectedOption = document.querySelector('input[name="exampleRadios"]:checked').value;

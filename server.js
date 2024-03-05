@@ -7,7 +7,7 @@ const multer = require('multer');
 const csvParser = require('csv-parser');
 const bodyParser = require('body-parser');
 const unidecode = require('unidecode');
-const { Employee, getAllTablesAndStructure }  = require('./src/public/model/models');
+const {   Employees, Etudiant , getAllTablesAndStructure }  = require('./src/public/model/models');
 const { Sequelize } = require('sequelize');
 
 const app = express();
@@ -150,6 +150,39 @@ getAllTablesAndStructure()
     res.render('./partiales/fade', { items: items }); // Pass the 'items' object to the template
   });
   */
+  app.post('/saveToDatabase', async (req, res) => {
+    try {
+      // Extract data from the request body
+      const { objectData, integerData, stringData } = req.body;
+  
+      // Determine the model based on the stringData
+      const Model = stringData === 'employee' ? Employees : Etudiant;
+
+
+
+
+  
+      // Loop through each data item and perform insert or update
+      for (const data of objectData) {
+        // Find record by primary key (ID)
+        const existingRecord = await Model.findByPk(data.ID);
+        if (existingRecord) {
+          // If record exists, update it with new data
+          await existingRecord.update(data);
+        } else {
+          // If record doesn't exist, create a new one
+          await Model.create(data);
+        }
+      } 
+  
+     res.status(200).json({ message: 'Data inserted and updated successfully' });
+    } catch (error) {
+      // Respond with error message
+      res.status(500).json({ message: 'Error saving data', error: error.message });
+    }
+  });
+  
+
 
 app.listen(port, () => {
     console.log(`Server is listening on port http://localhost:${port}`);
