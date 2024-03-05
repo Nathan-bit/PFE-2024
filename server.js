@@ -7,6 +7,7 @@ const multer = require('multer');
 const csvParser = require('csv-parser');
 const bodyParser = require('body-parser');
 const unidecode = require('unidecode');
+const sequelize = require('sequelize');
 const {   Employers, Etudiant , getAllTablesAndStructure }  = require('./src/public/model/models');
 const mysql = require('mysql');
 const moment = require('moment');
@@ -14,7 +15,7 @@ const moment = require('moment');
 const app = express();
 const port = 3000;
 
-const connection = mysql.createConnection({
+ const connection = mysql.createConnection({
     user: 'root',
     host: 'localhost',
     database: 'stb',
@@ -28,7 +29,7 @@ const connection = mysql.createConnection({
     }
     console.log('Connected to MySQL database');
   });
-
+ 
 // Middleware
 app.use(bodyParser.json());
 
@@ -171,7 +172,7 @@ getAllTablesAndStructure()
       if (Options == '1') {
         // Insert new data only
         sqlQuery = `INSERT INTO ${TableName} (${Object.keys(Data[0]).join(', ')}) VALUES ?`;
-      } else if (Options =='2') {
+      } else if (Options == '2') {
         // Insert new data and update old data
         sqlQuery = `INSERT INTO ${TableName} (${Object.keys(Data[0]).join(', ')}) VALUES ? ON DUPLICATE KEY UPDATE `;
         const updateValues = Object.keys(Data[0]).map(key => `${key} = VALUES(${key})`).join(', ');
@@ -204,7 +205,50 @@ getAllTablesAndStructure()
       // Respond with error message
       res.status(500).json({ message: 'Error saving data', error: error.message });
     }
-  });
+  });  
+/*   app.post('/saveToDatabase', async (req, res) => {
+    try {
+        // Extract data from the request body
+        const { Data, Options, TableName } = req.body;
+
+        // Get the appropriate model based on TableName
+        const Model = sequelize.models[TableName];
+
+        if (!Model) {
+            // Respond with error message for invalid TableName
+            return res.status(400).json({ message: 'Invalid TableName value' });
+        }
+
+        if (Options == '1') {
+            // Insert new data only
+            await Promise.all(Data.map(async (item) => {
+                await Model.bulkCreate(item);
+            }));
+            res.status(200).json({ message: 'Data inserted successfully' });
+        } else if (Options == '2') {
+            // Insert new data and update old data
+            await Promise.all(Data.map(async (item) => {
+                // Check if the item exists
+                const existingItem = await Model.findByPk(item.Email);
+                if (existingItem) {
+                    // If the item exists, update it
+                    await existingItem.update(item);
+                } else {
+                    // If the item doesn't exist, create it
+                    await Model.bulkCreate(item);
+                }
+            }));
+            res.status(200).json({ message: 'Data inserted and updated successfully' });
+        } else {
+            // Respond with error message for invalid Options
+            return res.status(400).json({ message: 'Invalid Options value' });
+        }
+    } catch (error) {
+        // Respond with error message
+        res.status(500).json({ message: 'Error saving data', error: error.message });
+    }
+}); */
+
 
 app.listen(port, () => {
     console.log(`Server is listening on port http://localhost:${port}`);

@@ -1,68 +1,58 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
 // Replace 'database_name', 'username', 'password', and 'host' with your MySQL database credentials
-const sequelize = new Sequelize('stb', 'root', '', {
+const sequelize = new Sequelize('data', 'root', '', {
   host: 'localhost',
   dialect: 'mysql',
   port: 3306
 });
 
-// Define the Employee model
-const Employers = sequelize.define('Employers', {
-  ID: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  Nom: {
-    type: DataTypes.STRING
-  },
-  Prenom: {
-    type: DataTypes.STRING
-  },
-  Departement: {
-    type: DataTypes.STRING
-  },
+// Define the Employer model
+const Employer = sequelize.define('Employer', {
   Email: {
     type: DataTypes.STRING,
-    // Add the `unique` constraint conditionally
-    unique:true
-  },
-  Date: {
-    type: DataTypes.DATE
-  }
-}, {
-  //tableName: 'Employers', // Change this according to your table name
-  timestamps: false, // Set to true if you want Sequelize to manage createdAt and updatedAt fields
-});
-
-const Etudiant = sequelize.define('Etudiants', {
-  ID: {
-    type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
-  },
-  Nom: {
-    type: DataTypes.STRING
-  },
-  Prenom: {
-    type: DataTypes.STRING
-  },
-  Departement: {
-    type: DataTypes.STRING
-  },
- 
-  Email: {
-    type: DataTypes.STRING,
-    // Add the `unique` constraint conditionally
     unique: true
   },
+  Nom: {
+    type: DataTypes.STRING
+  },
+  Prenom: {
+    type: DataTypes.STRING
+  },
+  Departement: {
+    type: DataTypes.STRING
+  },
   Date: {
     type: DataTypes.DATE
   }
 }, {
-  tableName: 'Etudiant',// Change this according to your table name
-  timestamps: true // Set to true if you want Sequelize to manage createdAt and updatedAt fields
+  tableName: 'Employers', // Change this according to your table name
+  timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt fields
+});
+
+// Define the Etudiant model
+const Etudiant = sequelize.define('Etudiant', {
+  Email: {
+    type: DataTypes.STRING,
+    primaryKey: true,
+    unique: true
+  },
+  Nom: {
+    type: DataTypes.STRING
+  },
+  Prenom: {
+    type: DataTypes.STRING
+  },
+  Departement: {
+    type: DataTypes.STRING
+  },
+  Date: {
+    type: DataTypes.DATE
+  }
+}, {
+  tableName: 'Etudiant', // Change this according to your table name
+  timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt fields
 });
 
 // Function to get all tables and their structures
@@ -95,7 +85,7 @@ async function getAllTablesAndStructure() {
 
     return tablesStructure;
   } catch (error) {
-   // console.error('Error fetching tables and their columns:', error.message);
+    // console.error('Error fetching tables and their columns:', error.message);
     return null;
   }
 }
@@ -113,20 +103,19 @@ async function connectToDatabase() {
 // Sync the model with the database
 async function syncModel() {
   try {
-    await Employers.sync({ alter: true });
+    await Employer.sync({ alter: true });
     await Etudiant.sync({ alter: true });
-
   } catch (error) {
-    console.error('Error syncing Employee model:', error);
+    console.error('Error syncing models:', error);
   }
 }
 
 sequelize.sync()
   .then(() => {
-   // console.log('Database & tables synced');
+    // console.log('Database & tables synced');
   })
   .catch(err => {
-   // console.error('Error syncing database:', err);
+    // console.error('Error syncing database:', err);
   });
 
 // Call the functions to connect and sync the model
@@ -134,6 +123,7 @@ connectToDatabase();
 syncModel();
 
 module.exports = {
-  Employers, Etudiant,
+  Employer,
+  Etudiant,
   getAllTablesAndStructure
 };

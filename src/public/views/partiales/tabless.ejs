@@ -66,40 +66,41 @@
     }
 
     function saveTable() {
-        var headers = [];
-        var data = [];
+    var headers = [];
+    var data = [];
 
-        // Get all table headers
-        document.querySelectorAll('thead th').forEach(function(th) {
-            var headerText = th.innerText.trim(); // Trim to remove leading/trailing whitespace
-            if (headerText !== "") {
-                headers.push(headerText);
+    // Get all table headers
+    document.querySelectorAll('thead th').forEach(function(th) {
+        var headerText = th.innerText.trim(); // Trim to remove leading/trailing whitespace
+        headers.push(headerText); // Push header text regardless of emptiness
+    });
+
+    // Get all table rows
+    var tableRows = document.querySelectorAll('tbody tr');
+    var totalRows = tableRows.length;
+    var processedRows = 0;
+
+    tableRows.forEach(function(tr) {
+        var rowData = {};
+        tr.querySelectorAll('td').forEach(function(td, index) {
+            var header = headers[index];
+            if (header && header !== "") {
+                rowData[header] = td.innerText;
             }
         });
+        data.push(rowData);
+        processedRows++;
 
-        // Get all table rows
-        var tableRows = document.querySelectorAll('tbody tr');
-        var totalRows = tableRows.length;
-        var processedRows = 0;
+       /*   Check if all rows are processed
+        if (processedRows === totalRows) { 
+            
+         
+        }*/
+    });
 
-        tableRows.forEach(function(tr) {
-            var rowData = {};
-            tr.querySelectorAll('td').forEach(function(td, index) {
-                if (headers[index]) {
-                    rowData[headers[index]] = td.innerText;
-                }
-            });
-            data.push(rowData);
-            processedRows++;
-
-            // Check if all rows are processed
-            if (processedRows === totalRows) {
-              
-                // Call Send function after data is populated
-            }
-        });
-        return data
-    }
+  //  console.log(data);
+    return data;
+}
 
     
 </script>
