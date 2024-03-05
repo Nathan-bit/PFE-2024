@@ -151,36 +151,31 @@ getAllTablesAndStructure()
   });
   */
   app.post('/saveToDatabase', async (req, res) => {
+    const { Data, Options,TableName  } = req.body;
+const Model = TableName === 'employee' ? Employees : Etudiant;
+      console.log(Data,Options,TableName);
+    // Assuming Data is an array of objects you want to insert/update
     try {
-      // Extract data from the request body
-      const { objectData, integerData, stringData } = req.body;
-  
-      // Determine the model based on the stringData
-      const Model = stringData === 'employee' ? Employees : Etudiant;
-
-
-
-
-  
-      // Loop through each data item and perform insert or update
-      for (const data of objectData) {
-        // Find record by primary key (ID)
-        const existingRecord = await Model.findByPk(data.ID);
-        if (existingRecord) {
-          // If record exists, update it with new data
-          await existingRecord.update(data);
+        if (Options == '1') {
+            // Insert new data only
+            await Model.bulkCreate(Data);
+            res.status(200).json({ message: 'Data inserted successfully' });
+        } else if (Options == '2') {
+            // Insert new data and update old data
+            await Model.bulkCreate(Data, {
+                updateOnDuplicate: ['value'] // Replace 'value' with the actual field you want to update on duplicate
+            });
+            res.status(200).json({ message: 'Data inserted and updated successfully' });
         } else {
-          // If record doesn't exist, create a new one
-          await Model.create(data);
+            res.status(400).json({ message: 'Invalid Options value' });
         }
-      } 
-  
-     res.status(200).json({ message: 'Data inserted and updated successfully' });
     } catch (error) {
-      // Respond with error message
-      res.status(500).json({ message: 'Error saving data', error: error.message });
+        console.error("Error saving data:", error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
-  });
+});
+
+  
   
 
 

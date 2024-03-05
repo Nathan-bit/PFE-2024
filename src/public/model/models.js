@@ -26,10 +26,7 @@ const Employees = sequelize.define('Employers', {
   Email: {
     type: DataTypes.STRING,
     // Add the `unique` constraint conditionally
-    unique: {
-      name: 'unique_email',
-      msg: 'Email address must be unique'
-    }
+    unique:true
   },
   Date: {
     type: DataTypes.DATE
@@ -54,16 +51,11 @@ const Etudiant = sequelize.define('Etudiant', {
   Departement: {
     type: DataTypes.STRING
   },
-  Sexe: {
-    type: DataTypes.STRING
-  },
+ 
   Email: {
     type: DataTypes.STRING,
     // Add the `unique` constraint conditionally
-    unique: {
-      name: 'unique_email',
-      msg: 'Email address must be unique'
-    }
+    unique: true
   },
   Date: {
     type: DataTypes.DATE
