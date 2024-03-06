@@ -6,6 +6,15 @@
   <title>Save and Send Button with Modal</title>
   <!-- Bootstrap CSS -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    #success-message {
+        color: green;
+    }
+    
+    #error-message {
+        color: red;
+    }
+</style>
 </head>
 <body>
 
@@ -19,7 +28,10 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Save Confirmation</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Save Confirmation  
+          <div id="success-message" style="display: none;"></div>
+          <div id="error-message" style="display: none;"></div> 
+        </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -73,23 +85,28 @@
              console.log("data before save",data);
       // function Send(data,options,tableName) {
         $.ajax({
-            url: '/saveToDatabase', // Replace with your server-side endpoint URL
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                Data: data,
-                Options: options,
-                TableName: tableName
-            }),
-            success: function(response) {
-                
-                console.log("Data saved successfully:", response);
-            },
-            error: function(xhr, status, error) {
-             
-                console.error("Error saving data:", error);
-            }
-        });
+    url: '/saveToDatabase', // Replace with your server-side endpoint URL
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({
+        Data: data,
+        Options: options,
+        TableName: tableName
+    }),
+    success: function(response) {
+        // Show success message
+        $('#success-message').text("Data saved successfully " ).show();
+        // Hide error message if it's visible
+        $('#error-message').hide();
+    },
+    error: function(xhr, status, error) {
+        // Show error message
+        $('#error-message').text("Error saving data: " + error+ ":"+status).show();
+        // Hide success message if it's visible
+        $('#success-message').hide();
+    }
+});
+
    // }
 
     function getSelectedOption() {
@@ -101,6 +118,10 @@
         var menu = document.getElementById("menu");
         var selectedValue = menu.value;
         return selectedValue;
+    }
+    function GetMessage(msg,status){
+ 
+          return msg+" "+status;
     }
 }
 </script>

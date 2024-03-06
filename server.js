@@ -8,7 +8,7 @@ const csvParser = require('csv-parser');
 const bodyParser = require('body-parser');
 const unidecode = require('unidecode');
 const sequelize = require('sequelize');
-const {   Employers, Etudiant , getAllTablesAndStructure }  = require('./src/public/model/models');
+const {   Employer, Etudiant , getAllTablesAndStructure }  = require('./src/public/model/models');
 const mysql = require('mysql');
 const moment = require('moment');
 
@@ -18,7 +18,7 @@ const port = 3000;
  const connection = mysql.createConnection({
     user: 'root',
     host: 'localhost',
-    database: 'stb',
+    database: 'test',
     password: '',
     port: 3306,
   });
@@ -162,51 +162,53 @@ getAllTablesAndStructure()
   });
 
   
-  app.post('/saveToDatabase', async (req, res) => {
+ /*  app.post('/saveToDatabase', async (req, res) => {
     try {
-      // Extract data from the request body
-      const { Data, Options, TableName } = req.body;
-  
-      // Construct the SQL query based on Options
-      let sqlQuery;
-      if (Options == '1') {
-        // Insert new data only
-        sqlQuery = `INSERT INTO ${TableName} (${Object.keys(Data[0]).join(', ')}) VALUES ?`;
-      } else if (Options == '2') {
-        // Insert new data and update old data
-        sqlQuery = `INSERT INTO ${TableName} (${Object.keys(Data[0]).join(', ')}) VALUES ? ON DUPLICATE KEY UPDATE `;
-        const updateValues = Object.keys(Data[0]).map(key => `${key} = VALUES(${key})`).join(', ');
-        sqlQuery += updateValues;
-      } else {
-        // Respond with error message for invalid Options
-        return res.status(400).json({ message: 'Invalid Options value' });
-      }
-  
-      // Format dates to MySQL date format
-      const formattedData = Data.map(item => {
-        const formattedItem = { ...item };
-        // Assuming 'Date' field is the date that needs formatting
-        if (formattedItem.Date) {
-          formattedItem.Date = moment(formattedItem.Date, 'MM/DD/YY HH:mm').format('YYYY-MM-DD HH:mm:ss');
+        // Extract data from the request body
+        let { Data, Options, TableName } = req.body;
+        
+        // Parse Data if it's a string
+        if (typeof Data === 'string') {
+            Data = JSON.parse(Data);
         }
-        return formattedItem;
-      });
-  
-      // Execute the SQL query
-      connection.query(sqlQuery, [formattedData.map(item => Object.values(item))], (error, results, fields) => {
-        if (error) {
-          // Respond with error message
-          return res.status(500).json({ message: 'Error saving data', error: error.message });
+         
+        console.log(Data, Options, TableName);
+
+        // Construct the SQL query based on Options
+        let sqlQuery;
+        let values = [];
+        if (Options == '1') {
+            // Insert new data only
+            sqlQuery = `INSERT INTO ${TableName} (${Object.keys(Data[0]).join(', ')}) VALUES ?`;
+            values = Data.map(item => Object.values(item));
+        } else if (Options == '2') {
+            // Insert new data and update old data
+            sqlQuery = `INSERT INTO ${TableName} (${Object.keys(Data[0]).join(', ')}) VALUES ? ON DUPLICATE KEY UPDATE `;
+            const updateValues = Object.keys(Data[0]).map(key => `${key} = VALUES(${key})`).join(', ');
+            sqlQuery += updateValues;
+            values = Data.map(item => Object.values(item));
+        } else {
+            // Respond with error message for invalid Options
+            return res.status(400).json({ message: 'Invalid Options value' });
         }
-        // Sending response after query execution
-        res.status(200).json({ message: 'Data inserted and updated successfully' });
-      });
+
+        // Execute the SQL query
+        connection.query(sqlQuery, [values], (error, results, fields) => {
+            if (error) {
+                // Respond with error message
+                return res.status(500).json({ message: 'Error saving data', error: error.message });
+            }
+            // Sending response after query execution
+            res.status(200).json({ message: 'Data inserted and updated successfully' });
+        });
     } catch (error) {
-      // Respond with error message
-      res.status(500).json({ message: 'Error saving data', error: error.message });
+        // Respond with error message
+        res.status(500).json({ message: 'Error saving data', error: error.message });
     }
-  });  
-/*   app.post('/saveToDatabase', async (req, res) => {
+});
+ */
+/* 
+   app.post('/saveToDatabase', async (req, res) => {
     try {
         // Extract data from the request body
         const { Data, Options, TableName } = req.body;
@@ -247,7 +249,64 @@ getAllTablesAndStructure()
         // Respond with error message
         res.status(500).json({ message: 'Error saving data', error: error.message });
     }
-}); */
+}); 
+ */
+
+
+
+app.post('/saveToDatabase', async (req, res) => {
+  try {
+    // Extract data from the request body
+    let { Data, Options, TableName } = req.body;
+
+    // Parse Data if it's a string
+    if (typeof Data === 'string') {
+      Data = JSON.parse(Data);
+    }
+
+    console.log(Data, Options, TableName);
+
+    // Check if Options is valid
+    if (Options !== '1' && Options !== '2') {
+      return res.status(400).json({ message: 'Invalid Options value' });
+    }
+
+    // Insert or update data based on Options
+    if (Options === '1') {
+      // Insert new data only
+      const result = await Employer.bulkCreate(Data, { ignoreDuplicates: true });
+      res.status(200).json({ message: 'Data inserted successfully', result });
+    } else if (Options === '2') {
+      // Insert new data and update old data if exists, otherwise add as new
+      const result = await Promise.all(Data.map(async (item) => {
+        // Ensure 'Email' field is present in each item
+        if (!item.Email) {
+          throw new Error('Each record must have an "Email" field for updating');
+        }
+
+        // Find the existing record
+        let existingRecord = await Employer.findOne({ where: { Email: item.Email } });
+
+        if (existingRecord) {
+          // If existing record found, perform update operation using Email as the identifier
+          await Employer.update(item, { where: { Email: item.Email } });
+        } else {
+          // If no existing record found, add as a new record
+          await Employer.create(item);
+        }
+
+        return item;
+      }));
+
+      res.status(200).json({ message: 'Data inserted and updated successfully', result });
+    }
+
+  } catch (error) {
+    console.error('Error saving data:', error);
+    res.status(500).json({ message: 'Error saving data', error: error.message });
+  }
+});
+
 
 
 app.listen(port, () => {

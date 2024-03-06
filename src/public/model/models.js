@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
 // Replace 'database_name', 'username', 'password', and 'host' with your MySQL database credentials
-const sequelize = new Sequelize('data', 'root', '', {
+const sequelize = new Sequelize('test', 'root', '', {
   host: 'localhost',
   dialect: 'mysql',
   port: 3306
@@ -17,6 +17,10 @@ const Employer = sequelize.define('Employer', {
   Nom: {
     type: DataTypes.STRING
   },
+  ID: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true
+  },
   Prenom: {
     type: DataTypes.STRING
   },
@@ -27,9 +31,10 @@ const Employer = sequelize.define('Employer', {
     type: DataTypes.DATE
   }
 }, {
-  tableName: 'Employers', // Change this according to your table name
-  timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt fields
+  tableName: 'Employers',
+  timestamps: true
 });
+
 
 // Define the Etudiant model
 const Etudiant = sequelize.define('Etudiant', {
