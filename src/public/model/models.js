@@ -9,17 +9,17 @@ const sequelize = new Sequelize('test', 'root', '', {
 
 // Define the Employer model
 const Employer = sequelize.define('Employer', {
+  ID: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
   Email: {
     type: DataTypes.STRING,
-    primaryKey: true,
     unique: true
   },
   Nom: {
     type: DataTypes.STRING
-  },
-  ID: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true
   },
   Prenom: {
     type: DataTypes.STRING
@@ -54,6 +54,10 @@ const Etudiant = sequelize.define('Etudiant', {
   },
   Date: {
     type: DataTypes.DATE
+  },
+  ID: {
+    type: DataTypes.INTEGER
+    
   }
 }, {
   tableName: 'Etudiant', // Change this according to your table name

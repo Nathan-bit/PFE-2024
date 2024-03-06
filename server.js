@@ -15,7 +15,7 @@ const moment = require('moment');
 const app = express();
 const port = 3000;
 
- const connection = mysql.createConnection({
+/*  const connection = mysql.createConnection({
     user: 'root',
     host: 'localhost',
     database: 'test',
@@ -28,7 +28,7 @@ const port = 3000;
       return;
     }
     console.log('Connected to MySQL database');
-  });
+  }); */
  
 // Middleware
 app.use(bodyParser.json());
@@ -251,61 +251,67 @@ getAllTablesAndStructure()
     }
 }); 
  */
-
-
+// Endpoint to handle the AJAX requestapp.post('/saveToDatabase', (req, res) => {
+  // Extract data from the request body
+  const dbConfig = {
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'test'
+};
+app.use(express.json());
 
 app.post('/saveToDatabase', async (req, res) => {
+  const { Data, Options, TableName } = req.body; // Assuming Data, Options, and TableName are sent in the request body
+
   try {
-    // Extract data from the request body
-    let { Data, Options, TableName } = req.body;
+      // Create a MySQL connection
+      const connection = await mysql.createConnection(dbConfig);
 
-    // Parse Data if it's a string
-    if (typeof Data === 'string') {
-      Data = JSON.parse(Data);
-    }
+      // Construct the query based on the option
+      let query;
+      if (Options === '1') {
+          // Insert data only if it does not exist
+          query = `INSERT IGNORE INTO ${TableName} SET ?`;
+      } else if (Options === '2') {
+          // Insert data and update if it already exists
+          query = `INSERT INTO ${TableName} SET ? ON DUPLICATE KEY UPDATE ?`;
+      } else {
+          throw new Error('Invalid option provided');
+      }
 
-    console.log(Data, Options, TableName);
+      // Execute the query
+      let results;
+      if (Options === '1') {
+          results = await Promise.all(Data.map(row => connection.query(query, [sanitizeRow(row)])));
+      } else if (Options === '2') {
+          results = await Promise.all(Data.map(row => connection.query(query, [sanitizeRow(row), sanitizeRow(row)])));
+      }
 
-    // Check if Options is valid
-    if (Options !== '1' && Options !== '2') {
-      return res.status(400).json({ message: 'Invalid Options value' });
-    }
+      // Close the connection
+      await connection.end();
 
-    // Insert or update data based on Options
-    if (Options === '1') {
-      // Insert new data only
-      const result = await Employer.bulkCreate(Data, { ignoreDuplicates: true });
-      res.status(200).json({ message: 'Data inserted successfully', result });
-    } else if (Options === '2') {
-      // Insert new data and update old data if exists, otherwise add as new
-      const result = await Promise.all(Data.map(async (item) => {
-        // Ensure 'Email' field is present in each item
-        if (!item.Email) {
-          throw new Error('Each record must have an "Email" field for updating');
-        }
-
-        // Find the existing record
-        let existingRecord = await Employer.findOne({ where: { Email: item.Email } });
-
-        if (existingRecord) {
-          // If existing record found, perform update operation using Email as the identifier
-          await Employer.update(item, { where: { Email: item.Email } });
-        } else {
-          // If no existing record found, add as a new record
-          await Employer.create(item);
-        }
-
-        return item;
-      }));
-
-      res.status(200).json({ message: 'Data inserted and updated successfully', result });
-    }
-
+      console.log('Data saved successfully:', results);
+      // Respond with success message or other data as needed
+      res.status(200).json({ message: 'Data saved successfully', results });
   } catch (error) {
-    console.error('Error saving data:', error);
-    res.status(500).json({ message: 'Error saving data', error: error.message });
+      console.error('Error saving data:', error.message);
+      // Respond with an error message
+      res.status(500).json({ error: 'Error saving data' });
   }
 });
+
+function sanitizeRow(row) {
+  // This function sanitizes the row by removing any circular references
+  // and converting it to a plain object
+  const sanitizedRow = {};
+  for (let key in row) {
+      if (Object.prototype.hasOwnProperty.call(row, key)) {
+          sanitizedRow[key] = row[key];
+      }
+  }
+  return sanitizedRow;
+}
 
 
 

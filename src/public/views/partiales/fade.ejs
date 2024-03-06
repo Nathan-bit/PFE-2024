@@ -95,13 +95,13 @@
     }),
     success: function(response) {
         // Show success message
-        $('#success-message').text("Data saved successfully " ).show();
+        $('#success-message').text("Data saved successfully "+response ).show();
         // Hide error message if it's visible
         $('#error-message').hide();
     },
     error: function(xhr, status, error) {
         // Show error message
-        $('#error-message').text("Error saving data: " + error+ ":"+status).show();
+        $('#error-message').text("Error saving data: " + error+ " : "+status).show();
         // Hide success message if it's visible
         $('#success-message').hide();
     }
