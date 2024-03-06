@@ -1,5 +1,4 @@
 const express = require('express');
-const iconv = require('iconv-lite');
 const path = require('path');
 const fs = require('fs');
 const xlsx = require('xlsx');
@@ -10,26 +9,10 @@ const unidecode = require('unidecode');
 const sequelize = require('sequelize');
 const {   Employer, Etudiant , getAllTablesAndStructure }  = require('./src/public/model/models');
 const mysql = require('mysql');
-const moment = require('moment');
 
 const app = express();
 const port = 3000;
 
-/*  const connection = mysql.createConnection({
-    user: 'root',
-    host: 'localhost',
-    database: 'test',
-    password: '',
-    port: 3306,
-  });
-  connection.connect((err) => {
-    if (err) {
-      console.error('Error connecting to MySQL database: ', err);
-      return;
-    }
-    console.log('Connected to MySQL database');
-  }); */
- 
 // Middleware
 app.use(bodyParser.json());
 
@@ -161,98 +144,6 @@ getAllTablesAndStructure()
     console.error('Error:', error);
   });
 
-  
- /*  app.post('/saveToDatabase', async (req, res) => {
-    try {
-        // Extract data from the request body
-        let { Data, Options, TableName } = req.body;
-        
-        // Parse Data if it's a string
-        if (typeof Data === 'string') {
-            Data = JSON.parse(Data);
-        }
-         
-        console.log(Data, Options, TableName);
-
-        // Construct the SQL query based on Options
-        let sqlQuery;
-        let values = [];
-        if (Options == '1') {
-            // Insert new data only
-            sqlQuery = `INSERT INTO ${TableName} (${Object.keys(Data[0]).join(', ')}) VALUES ?`;
-            values = Data.map(item => Object.values(item));
-        } else if (Options == '2') {
-            // Insert new data and update old data
-            sqlQuery = `INSERT INTO ${TableName} (${Object.keys(Data[0]).join(', ')}) VALUES ? ON DUPLICATE KEY UPDATE `;
-            const updateValues = Object.keys(Data[0]).map(key => `${key} = VALUES(${key})`).join(', ');
-            sqlQuery += updateValues;
-            values = Data.map(item => Object.values(item));
-        } else {
-            // Respond with error message for invalid Options
-            return res.status(400).json({ message: 'Invalid Options value' });
-        }
-
-        // Execute the SQL query
-        connection.query(sqlQuery, [values], (error, results, fields) => {
-            if (error) {
-                // Respond with error message
-                return res.status(500).json({ message: 'Error saving data', error: error.message });
-            }
-            // Sending response after query execution
-            res.status(200).json({ message: 'Data inserted and updated successfully' });
-        });
-    } catch (error) {
-        // Respond with error message
-        res.status(500).json({ message: 'Error saving data', error: error.message });
-    }
-});
- */
-/* 
-   app.post('/saveToDatabase', async (req, res) => {
-    try {
-        // Extract data from the request body
-        const { Data, Options, TableName } = req.body;
-
-        // Get the appropriate model based on TableName
-        const Model = sequelize.models[TableName];
-
-        if (!Model) {
-            // Respond with error message for invalid TableName
-            return res.status(400).json({ message: 'Invalid TableName value' });
-        }
-
-        if (Options == '1') {
-            // Insert new data only
-            await Promise.all(Data.map(async (item) => {
-                await Model.bulkCreate(item);
-            }));
-            res.status(200).json({ message: 'Data inserted successfully' });
-        } else if (Options == '2') {
-            // Insert new data and update old data
-            await Promise.all(Data.map(async (item) => {
-                // Check if the item exists
-                const existingItem = await Model.findByPk(item.Email);
-                if (existingItem) {
-                    // If the item exists, update it
-                    await existingItem.update(item);
-                } else {
-                    // If the item doesn't exist, create it
-                    await Model.bulkCreate(item);
-                }
-            }));
-            res.status(200).json({ message: 'Data inserted and updated successfully' });
-        } else {
-            // Respond with error message for invalid Options
-            return res.status(400).json({ message: 'Invalid Options value' });
-        }
-    } catch (error) {
-        // Respond with error message
-        res.status(500).json({ message: 'Error saving data', error: error.message });
-    }
-}); 
- */
-// Endpoint to handle the AJAX requestapp.post('/saveToDatabase', (req, res) => {
-  // Extract data from the request body
   const dbConfig = {
     host: 'localhost',
     user: 'root',
@@ -265,6 +156,8 @@ app.post('/saveToDatabase', async (req, res) => {
   const { Data, Options, TableName } = req.body; // Assuming Data, Options, and TableName are sent in the request body
 
   try {
+      console.log('Data received:', Data); // Log the data before saving to identify any circular references
+
       // Create a MySQL connection
       const connection = await mysql.createConnection(dbConfig);
 
@@ -283,9 +176,9 @@ app.post('/saveToDatabase', async (req, res) => {
       // Execute the query
       let results;
       if (Options === '1') {
-          results = await Promise.all(Data.map(row => connection.query(query, [sanitizeRow(row)])));
+          results = await Promise.all(Data.map(row => connection.query(query, [serializeRow(row)])));
       } else if (Options === '2') {
-          results = await Promise.all(Data.map(row => connection.query(query, [sanitizeRow(row), sanitizeRow(row)])));
+          results = await Promise.all(Data.map(row => connection.query(query, [serializeRow(row), serializeRow(row)])));
       }
 
       // Close the connection
@@ -301,20 +194,10 @@ app.post('/saveToDatabase', async (req, res) => {
   }
 });
 
-function sanitizeRow(row) {
-  // This function sanitizes the row by removing any circular references
-  // and converting it to a plain object
-  const sanitizedRow = {};
-  for (let key in row) {
-      if (Object.prototype.hasOwnProperty.call(row, key)) {
-          sanitizedRow[key] = row[key];
-      }
-  }
-  return sanitizedRow;
+function serializeRow(row) {
+  // This function serializes each row to remove circular references
+  return JSON.parse(JSON.stringify(row));
 }
-
-
-
 app.listen(port, () => {
     console.log(`Server is listening on port http://localhost:${port}`);
 });
