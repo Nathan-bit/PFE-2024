@@ -1,0 +1,11 @@
+<div class="container">
+    <div class="form-group">
+        <label for="menus">Choisir la Table :</label>
+        <select id="menus" onchange="getSelectedValue()" class="form-control">
+            <option value="" selected disabled>Sélectionner la table</option>
+            <% Object.keys(items).forEach(function(key) { %>
+                <option value="<%= key %>"><%= key %></option>
+            <% }); %>
+        </select>
+    </div>
+</div>

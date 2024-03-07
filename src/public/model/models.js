@@ -32,19 +32,20 @@ const Employer = sequelize.define('Employer', {
   }
 }, {
   tableName: 'Employers',
-  timestamps: true
+  timestamps: false
 });
 
 
 // Define the Etudiant model
 const Etudiant = sequelize.define('Etudiant', {
   ID: {
-    type: DataTypes.INTEGER
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
     
   },
   Email: {
-    type: DataTypes.STRING,
-    primaryKey: true,
+    type: DataTypes.STRING, 
     unique: true
   },
   Nom: {
@@ -62,7 +63,7 @@ const Etudiant = sequelize.define('Etudiant', {
  
 }, {
   tableName: 'Etudiant', // Change this according to your table name
-  timestamps: true // Set to true if you want Sequelize to manage createdAt and updatedAt fields
+  timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt fields
 });
 
 // Function to get all tables and their structures

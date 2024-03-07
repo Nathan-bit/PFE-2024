@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRUD Table</title>
+<!-- Bootstrap CSS -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+</head>
+<body>
+
+<table id="crudTable" class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Country</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>John</td>
+            <td>30</td>
+            <td>USA</td>
+            <td><button class="btn btn-sm btn-primary" onclick="editRow(this)"><i class="fas fa-edit"></i> Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteRow(this)"><i class="fas fa-trash-alt"></i> Delete</button></td>
+        </tr>
+        <tr>
+            <td>Alice</td>
+            <td>25</td>
+            <td>UK</td>
+            <td><button class="btn btn-sm btn-primary" onclick="editRow(this)"><i class="fas fa-edit"></i> Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteRow(this)"><i class="fas fa-trash-alt"></i> Delete</button></td>
+        </tr>
+        <tr>
+            <td>Bob</td>
+            <td>40</td>
+            <td>Canada</td>
+            <td><button class="btn btn-sm btn-primary" onclick="editRow(this)"><i class="fas fa-edit"></i> Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteRow(this)"><i class="fas fa-trash-alt"></i> Delete</button></td>
+        </tr>
+    </tbody>
+</table>
+
+<button class="btn btn-success" onclick="addRow()"><i class="fas fa-plus"></i> Add Row</button>
+
+<!-- Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Font Awesome JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+
+<script>
+    function addRow() {
+        var table = document.getElementById('crudTable').getElementsByTagName('tbody')[0];
+        var newRow = table.insertRow(table.rows.length);
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        var cell3 = newRow.insertCell(2);
+        var cell4 = newRow.insertCell(3);
+
+        cell1.innerHTML = '<input type="text" class="form-control">';
+        cell2.innerHTML = '<input type="text" class="form-control">';
+        cell3.innerHTML = '<input type="text" class="form-control">';
+        cell4.innerHTML = '<button class="btn btn-sm btn-success" onclick="saveRow(this)"><i class="fas fa-save"></i> Save</button>';
+    }
+
+    function editRow(button) {
+        var row = button.parentNode.parentNode;
+        var cells = row.getElementsByTagName('td');
+
+        for (var i = 0; i < cells.length - 1; i++) {
+            cells[i].innerHTML = '<input type="text" class="form-control" value="' + cells[i].innerText + '">';
+        }
+
+        var actionCell = row.getElementsByTagName('td')[cells.length - 1];
+        actionCell.innerHTML = '<button class="btn btn-sm btn-primary" onclick="updateRow(this)"><i class="fas fa-check"></i> Update</button> <button class="btn btn-sm btn-secondary" onclick="cancelEdit(this)"><i class="fas fa-times"></i> Cancel</button>';
+    }
+
+    function updateRow(button) {
+        var row = button.parentNode.parentNode;
+        var cells = row.getElementsByTagName('td');
+
+        for (var i = 0; i < cells.length - 1; i++) {
+            cells[i].innerHTML = cells[i].getElementsByTagName('input')[0].value;
+        }
+
+        var actionCell = row.getElementsByTagName('td')[cells.length - 1];
+        actionCell.innerHTML = '<button class="btn btn-sm btn-primary" onclick="editRow(this)"><i class="fas fa-edit"></i> Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteRow(this)"><i class="fas fa-trash-alt"></i> Delete</button>';
+    }
+
+    function cancelEdit(button) {
+        var row = button.parentNode.parentNode;
+        var cells = row.getElementsByTagName('td');
+
+        for (var i = 0; i < cells.length - 1; i++) {
+            cells[i].innerHTML = cells[i].getElementsByTagName('input')[0].value;
+        }
+
+        var actionCell = row.getElementsByTagName('td')[cells.length - 1];
+        actionCell.innerHTML = '<button class="btn btn-sm btn-primary" onclick="editRow(this)"><i class="fas fa-edit"></i> Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteRow(this)"><i class="fas fa-trash-alt"></i> Delete</button>';
+    }
+
+    function saveRow(button) {
+        var row = button.parentNode.parentNode;
+        var inputs = row.getElementsByTagName('input');
+
+        var cell1Value = inputs[0].value;
+        var cell2Value = inputs[1].value;
+        var cell3Value = inputs[2].value;
+
+        row.innerHTML = '<td>' + cell1Value + '</td><td>' + cell2Value + '</td><td>' + cell3Value + '</td><td><button class="btn btn-sm btn-primary" onclick="editRow(this)"><i class="fas fa-edit"></i> Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteRow(this)"><i class="fas fa-trash-alt"></i> Delete</button></td>';
+    }
+
+    function deleteRow(button) {
+        var row = button.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+</script>
+
+</body>
+</html>

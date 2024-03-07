@@ -226,7 +226,7 @@ getDataFromTable('eMploYers')
             // Assign the retrieved data to data
             const data = tableData;
             // You can use data here within this.then() block
-            console.log('Data from table:', data);
+
             
             // Send the response back to the client
             res.send(data);
