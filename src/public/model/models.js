@@ -38,6 +38,10 @@ const Employer = sequelize.define('Employer', {
 
 // Define the Etudiant model
 const Etudiant = sequelize.define('Etudiant', {
+  ID: {
+    type: DataTypes.INTEGER
+    
+  },
   Email: {
     type: DataTypes.STRING,
     primaryKey: true,
@@ -55,13 +59,10 @@ const Etudiant = sequelize.define('Etudiant', {
   Date: {
     type: DataTypes.DATE
   },
-  ID: {
-    type: DataTypes.INTEGER
-    
-  }
+ 
 }, {
   tableName: 'Etudiant', // Change this according to your table name
-  timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt fields
+  timestamps: true // Set to true if you want Sequelize to manage createdAt and updatedAt fields
 });
 
 // Function to get all tables and their structures
@@ -99,6 +100,28 @@ async function getAllTablesAndStructure() {
   }
 }
 
+
+async function getDataFromTable(TableName) {
+  try {
+    // Retrieve data from the specified table
+    const tableData = await sequelize.query(`SELECT * FROM ${TableName}`, {
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    // Ensure we have some data returned
+    if (!Array.isArray(tableData) || tableData.length === 0) {
+      throw new Error(`No data found in table '${TableName}'`);
+    }
+
+    return tableData;
+  } catch (error) {
+    // console.error('Error fetching data from table:', error.message);
+    return null;
+  }
+}
+
+
+
 // Establish connection to the database
 async function connectToDatabase() {
   try {
@@ -134,5 +157,8 @@ syncModel();
 module.exports = {
   Employer,
   Etudiant,
-  getAllTablesAndStructure
+  getAllTablesAndStructure,
+ getDataFromTable
+
+  //getAllTablesAndData
 };

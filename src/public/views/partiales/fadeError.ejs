@@ -16,25 +16,3 @@
         </div>
     </div>
 </div>
-<script>
-    function validateAndUpload() {
-        var fileInput = document.getElementById('file');
-        var filePath = fileInput.value;
-        var allowedExtensions = /(\.csv|\.xlsx)$/i;
-
-        if (!allowedExtensions.exec(filePath)) {
-            displayError("Please choose a .csv or .xlsx file.");
-        } else {
-            // Proceed with file upload
-            document.getElementById('uploadForm').submit();
-        }
-    }
-
-    function displayError(message) {
-        var errorMessageElement = document.getElementById('errorMessage');
-        errorMessageElement.textContent = message;
-        $('#errorModal').modal('show');
-    }
-
-    
-</script>

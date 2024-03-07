@@ -1,1 +1,117 @@
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Title</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include jQuery library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        /* CSS styles for the table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-group">
+            <label for="menus">Voir les tables existantes :</label>
+            <select id="menus" onchange="getSelectedValue()" class="form-control">
+                <option value="" selected disabled>Sélectionner la table</option>
+                <% Object.keys(items).forEach(function(key) { %>
+                    <option value="<%= key %>"><%= key %></option>
+                <% }); %>
+            </select>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Data Table</h2>
+        <div class="table-responsive">
+            <table id="dynamicTable" class="table table-bordered">
+                <thead id="tableHeaders"></thead>
+                <tbody id="dynamicTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Function to handle the selected value from dropdown
+        function getSelectedValue() {
+            var selectedValue = document.getElementById("menus").value;
+            sendDataToServer(selectedValue);
+        }
+
+        // Function to send data to the server
+        function sendDataToServer(value) {
+            $.ajax({
+                type: "POST",
+                url: "/getDataFromTable", // Correct endpoint URL
+                data: { selectedValue: value },
+                success: function(response) {
+                    console.log("Data received successfully!");
+                    renderTable(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error occurred while sending data: " + error);
+                }
+            });
+        }
+
+        // Function to render the table with the received data
+        function renderTable(data) {
+            let tableHeaders = document.querySelector('#tableHeaders');
+            let tableBody = document.querySelector('#dynamicTableBody');
+
+            // Clear existing table rows and headers
+            tableBody.innerHTML = '';
+            tableHeaders.innerHTML = '';
+
+            // Create header row
+            let headerRow = document.createElement('tr');
+
+            // Iterate over object keys to create header cells
+            for (let key in data[0]) {
+                if (data[0].hasOwnProperty(key)) {
+                    let headerCell = document.createElement('th');
+                    headerCell.textContent = key;
+                    headerRow.appendChild(headerCell);
+                }
+            }
+
+            // Append the header row to the table headers
+            tableHeaders.appendChild(headerRow);
+
+            // Iterate over array of objects and generate table rows
+            data.forEach(obj => {
+                let row = document.createElement('tr');
+
+                // Iterate over object properties and create table cells dynamically
+                for (let key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        let cell = document.createElement('td');
+                        cell.textContent = obj[key];
+                        row.appendChild(cell);
+                    }
+                }
+
+                // Append the row to the table body
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>

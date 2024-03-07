@@ -7,13 +7,15 @@ const csvParser = require('csv-parser');
 const bodyParser = require('body-parser');
 const unidecode = require('unidecode');
 const sequelize = require('sequelize');
-const {   Employer, Etudiant , getAllTablesAndStructure }  = require('./src/public/model/models');
+const {   Employer, Etudiant ,getDataFromTable, getAllTablesAndStructure }  = require('./src/public/model/models');
 const mysql = require('mysql');
 
 const app = express();
 const port = 3000;
 
 // Middleware
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Set EJS as the view engine
@@ -111,7 +113,9 @@ app.get('/sendfiles', (req, res) => {
     res.render('uploadexcelfiles',{dt, items: items });
 });
 
-
+app.get('/databases', (req, res) => {
+    res.render('database',{items: items});
+});
 
 app.get('/', (req, res) => {
     res.render('home');
@@ -130,7 +134,7 @@ const sidebarItems = [
 // Dynamically create routes for each sidebar item
 sidebarItems.forEach(item => {
     app.get(`/${item}`, (req, res) => {
-        res.render(item);
+        res.render(item,{dt:dt , item: item,items:items});
     });
 });
 // Start the server
@@ -198,6 +202,43 @@ function serializeRow(row) {
   // This function serializes each row to remove circular references
   return JSON.parse(JSON.stringify(row));
 }
+
+let itemss = [];
+
+getDataFromTable('eMploYers')
+  .then(tableData => {
+    // Assign the retrieved data to itemss
+    itemss = tableData;
+    // You can use itemss here within this .then() block
+    console.log('Data from table "Etudiant":', itemss);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+
+  app.post('/getDataFromTable', (req, res) => {
+    const TableName = req.body.selectedValue;
+    console.log("Received data:", TableName);
+                  
+    // Assuming getDataFromTable returns a promise
+    getDataFromTable(TableName)
+        .then(tableData => {
+            // Assign the retrieved data to data
+            const data = tableData;
+            // You can use data here within this.then() block
+            console.log('Data from table:', data);
+            
+            // Send the response back to the client
+            res.send(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(500).send('Error occurred while fetching data from the table');
+        });
+});
+
+
+
 app.listen(port, () => {
     console.log(`Server is listening on port http://localhost:${port}`);
 });
