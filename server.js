@@ -361,7 +361,7 @@ getDataFromTable('eMploYers')
     // Assign the retrieved data to itemss
     itemss = tableData;
     // You can use itemss here within this .then() block
-    console.log('Data from table "Etudiant":', itemss);
+   // console.log('Data from table "Etudiant":', itemss);
   })
   .catch(error => {
     console.error('Error:', error);
@@ -369,7 +369,7 @@ getDataFromTable('eMploYers')
 
   app.post('/getDataFromTable', (req, res) => {
     const TableName = req.body.selectedValue;
-    console.log("Received data:", TableName);
+   // console.log("Received data:", TableName);
                   
     // Assuming getDataFromTable returns a promise
     getDataFromTable(TableName)
@@ -387,7 +387,54 @@ getDataFromTable('eMploYers')
             res.status(500).send('Error occurred while fetching data from the table');
         });
 });
+app.post('/saveChanges', (req, res) => {
+  const { editedData, TableName } = req.body;
 
+  // Log the received data
+ // console.log('TableName:', TableName);
+
+  // Extract the ID and other updated fields from editedData
+  const { ID, ...updateData } = editedData;
+
+  // Construct the SQL query to update the record
+  const sql = `UPDATE ${TableName} SET ? WHERE ID = ?`;
+
+  // Execute the query
+  pool.query(sql, [updateData, ID], (error, results) => {
+      if (error) {
+          console.error('Error updating database:', error);
+          res.status(500).send('Error updating database');
+      } else {
+          console.log('Database updated successfully');
+          res.send('Database updated successfully');
+      }
+  });
+});
+
+app.post('/deleteRow', (req, res) => {
+  const { rowData, TableName } = req.body;
+
+  // Log the received data
+  console.log('Row data to delete:', rowData);
+  console.log('TableName:', TableName);
+
+  // Extract the ID of the row to delete
+  const { ID } = rowData;
+
+  // Construct the SQL query to delete the record
+  const sql = `DELETE FROM ${TableName} WHERE ID = ?`;
+
+  // Execute the query
+  pool.query(sql, [ID], (error, results) => {
+      if (error) {
+          console.error('Error deleting row from database:', error);
+          res.status(500).send('Error deleting row from database');
+      } else {
+          console.log('Row deleted successfully');
+          res.send('Row deleted successfully');
+      }
+  });
+});
 
 
 app.listen(port, () => {

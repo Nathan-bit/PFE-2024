@@ -98,11 +98,13 @@
     <script>
 
         let rowToEdit;
-
+         let TableName;
         // Function to handle the selected value from dropdown
         function getSelectedValue() {
             var selectedValue = document.getElementById("menus").value;
+              TableName=selectedValue;
             sendDataToServer(selectedValue);
+            
         }
 let data=[]
         // Function to send data to the server
@@ -200,7 +202,7 @@ let data=[]
       
 
         // Function to save changes made in the modal
-function saveChanges() {
+/* function saveChanges() {
     // Get the edited values from the modal
     let editedData = {};
     for (let key in rowToEdit) {
@@ -214,6 +216,48 @@ function saveChanges() {
     
     $('#editModal').modal('hide'); // Hide the modal
 }
+ */
+
+ function saveChanges() {
+    // Get the edited values from the modal
+    let editedData = {};
+    for (let key in rowToEdit) {
+        if (rowToEdit.hasOwnProperty(key)) {
+            editedData[key] = document.getElementById(key).value;
+        }
+    }
+    
+    // Log the edited data in the console
+    console.log('Edited data:', editedData);
+
+    // Log TableName separately
+    console.log('TableName:', TableName);
+
+    // Send the edited data and TableName separately to the server
+    fetch('/saveChanges', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            editedData: editedData,
+            TableName: TableName
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Data sent successfully');
+        } else {
+            console.error('Failed to send data:', response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error('Error sending data:', error);
+    });
+    
+    $('#editModal').modal('hide'); // Hide the modal
+}
+
 
 // Function to handle deleting a row
 function deleteRow(row) {
@@ -242,8 +286,31 @@ function deleteRow(row) {
     $('#confirmDelete').on('click', function() {
         // Log the information of the selected row to the console
         console.log('Row to delete:', rowData);
+        console.log('TableName:', TableName);
         // You can perform actual deletion here if needed
+        deleteRowFromDatabase(rowData);
         $('#deleteModal').modal('hide'); // Hide the modal
+    });
+}
+         
+function deleteRowFromDatabase(rowData) {
+    // Send the delete request to the server
+    fetch('/deleteRow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ rowData: rowData, TableName: TableName }) // Correct syntax to pass rowData and TableName as a single object
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Row deleted successfully');
+        } else {
+            console.error('Failed to delete row:', response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting row:', error);
     });
 }
 
@@ -252,6 +319,10 @@ function deleteRow(row) {
         function addRow() {
              
         }
+
+
+       
+    
     </script>
 </body>
 </html>
