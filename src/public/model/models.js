@@ -13,17 +13,17 @@ const Employer = sequelize.define('Employer', {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
-  },
-  Email: {
-    type: DataTypes.STRING,
-    unique: true
-  },
-  Nom: {
+  },  Nom: {
     type: DataTypes.STRING
   },
   Prenom: {
     type: DataTypes.STRING
   },
+  Email: {
+    type: DataTypes.STRING,
+    unique: true
+  },
+
   Departement: {
     type: DataTypes.STRING
   },
@@ -31,7 +31,7 @@ const Employer = sequelize.define('Employer', {
     type: DataTypes.DATE
   }
 }, {
-  tableName: 'Coordianteur',
+  tableName: 'Chef_dep',
   timestamps: false
 });
 
@@ -44,15 +44,16 @@ const Etudiant = sequelize.define('Etudiant', {
     autoIncrement: true
     
   },
-  Email: {
-    type: DataTypes.STRING, 
-    unique: true
-  },
+  
   Nom: {
     type: DataTypes.STRING
   },
   Prenom: {
     type: DataTypes.STRING
+  },
+  Email: {
+    type: DataTypes.STRING, 
+    unique: true
   },
   Departement: {
     type: DataTypes.STRING
@@ -62,7 +63,7 @@ const Etudiant = sequelize.define('Etudiant', {
   },
  
 }, {
-  tableName: 'Encadrant', // Change this according to your table name
+  tableName: 'Users', // Change this according to your table name
   timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt fields
 });
 

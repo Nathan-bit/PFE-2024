@@ -168,7 +168,56 @@ const pool = mysql.createPool({
     password: '',
     database: 'test'
 });
+
 app.post('/saveToDatabase', async (req, res) => {
+  const { Data, Options, TableName } = req.body;
+
+  try {
+    // Check if TableName is missing
+    if (!TableName) {
+      res.status(400).json({ error: 'Table name is required.' });
+      return;
+    }
+
+    // Check if Options is missing or invalid
+    if (Options !== '1' && Options !== '2') {
+      res.status(400).json({ error: 'Invalid Options value. Use 1 or 2.' });
+      return;
+    }
+
+    // Handle data insertion based on the specified options
+    if (Options === '1') {
+      // Insert new data only
+      for (const item of Data) {
+        try {
+          const query = 'INSERT INTO ?? SET ?';
+          await pool.query(query, [TableName, item]);
+        } catch (error) {
+          // Ignore duplicate key errors
+          if (error.code !== 'ER_DUP_ENTRY') {
+            console.error('Error inserting data:', error);
+            res.status(500).json({ error: 'Internal server error.' });
+            return;
+          }
+        }
+      }
+      res.status(200).json({ message: 'Data inserted successfully.' });
+    } else if (Options === '2') {
+      // Insert new data and update existing data
+      for (const item of Data) {
+        const query = 'INSERT INTO ?? SET ? ON DUPLICATE KEY UPDATE ?';
+        await pool.query(query, [TableName, item, item]);
+      }
+      res.status(200).json({ message: 'Data inserted and updated successfully.' });
+    }
+  } catch (error) {
+    console.error('Error saving data to database:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+
+/* app.post('/saveToDatabase', async (req, res) => {
     const { Data, Options, TableName } = req.body;
   
     try {
@@ -203,7 +252,7 @@ app.post('/saveToDatabase', async (req, res) => {
       console.error('Error saving data to database:', error);
       res.status(500).json({ error: 'Internal server error.' });
     }
-});
+}); */
 
 
 /* app.post('/saveToDatabase', async (req, res) => {
