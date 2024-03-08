@@ -17,6 +17,7 @@ const port = 3000;
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(express.json());
 
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
@@ -147,16 +148,164 @@ getAllTablesAndStructure()
   .catch(error => {
     console.error('Error:', error);
   });
-
-  const dbConfig = {
+  
+  /* const dbConfig = {
     host: 'localhost',
     user: 'root',
     password: '',
     database: 'test'
 };
-app.use(express.json());
 
+
+
+// Create a MySQL connection pool
+const pool = mysql.createPool(dbConfig); */
+
+
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'test'
+});
 app.post('/saveToDatabase', async (req, res) => {
+    const { Data, Options, TableName } = req.body;
+  
+    try {
+      // Check if TableName is missing
+      if (!TableName) {
+       res.status(400).json({ error: 'Table name is required.' });
+      //  res.send({ error: 'Table name is required.' });
+        return;
+      }
+
+      // Check if Options is missing or invalid
+      if (Options !== '1' && Options !== '2') {
+        res.status(400).json({ error: 'Invalid Options value. Use 1 or 2.' });
+        return;
+      }
+  
+      // Handle data insertion based on the specified options
+      if (Options === '1') {
+        // Insert new data only
+        const query = 'INSERT INTO ?? SET ?';
+        await pool.query(query, [TableName, Data]);
+        res.status(200).json({ message: 'Data inserted successfully.' });
+      } else if (Options === '2') {
+        // Insert new data and update existing data
+        for (const item of Data) {
+          const query = 'INSERT INTO ?? SET ? ON DUPLICATE KEY UPDATE ?';
+          await pool.query(query, [TableName, item, item]);
+        }
+        res.status(200).json({ message: 'Data inserted and updated successfully.' });
+      }
+    } catch (error) {
+      console.error('Error saving data to database:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+
+
+/* app.post('/saveToDatabase', async (req, res) => {
+    const { Data, Options, TableName } = req.body;
+  
+    try {
+      // Handle data insertion based on the specified options
+      if (Options === '1') {
+        // Insert new data only
+        const query = 'INSERT INTO ?? SET ?';
+        await pool.query(query, [TableName, Data]);
+        res.status(200).json({ message: 'Data inserted successfully.' });
+      } else if (Options === '2') {
+        // Insert new data and update existing data
+        for (const item of Data) {
+          const query = 'INSERT INTO ?? SET ? ON DUPLICATE KEY UPDATE ?';
+          await pool.query(query, [TableName, item, item]);
+        }
+        res.status(200).json({ message: 'Data inserted and updated successfully.' });
+      } else {
+        res.status(400).json({ error: 'Invalid Options value.' });
+      }
+    } catch (error) {
+      console.error('Error saving data to database:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+    }
+  });
+   */
+  // Start the server
+
+ 
+/* app.post('/saveToDatabase', async (req, res) => {
+  const { Data, Options, TableName } = req.body;
+   console.log("Data",Data,"Options",Options,"TableName",TableName)
+  // Check if the table exists in the database
+  const tableExists = await new Promise((resolve, reject) => {
+    pool.query(`SELECT COUNT(*) AS count FROM information_schema.tables WHERE table_name = ?`, [TableName], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results[0].count > 0);
+      }
+    });
+  });
+
+  if (!tableExists) {
+    res.status(400).json({ error: 'Table not found' });
+    return;
+  }
+
+  // Save the data to the database
+  if (Options === '1') {
+    // Insert new data only
+    const promises = Data.map(data => {
+      return new Promise((resolve, reject) => {
+        const keys = Object.keys(data).join(',');
+        const values = Object.values(data).map(value => `'${value}'`).join(',');
+        pool.query(`INSERT INTO ${TableName} (${keys}) VALUES (${values})`, (error, results) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(results);
+          }
+        });
+      });
+    });
+
+    try {
+      await Promise.all(promises);
+      res.json({ message: 'Data inserted successfully' });
+    } catch (error) {
+      res.status(500).json({ error: 'Error inserting data' });
+    }
+  } else if (Options === '2') {
+    // Insert new data and update old data
+    const promises = Data.map(data => {
+      return new Promise((resolve, reject) => {
+        const keys = Object.keys(data).join(',');
+        const values = Object.values(data).map(value => `'${value}'`).join(',');
+        pool.query(`INSERT INTO ${TableName} (${keys}) VALUES (${values}) ON DUPLICATE KEY UPDATE ${keys} = VALUES(${keys})`, (error, results) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(results);
+          }
+        });
+      });
+    });
+
+    try {
+      await Promise.all(promises);
+      res.json({ message: 'Data inserted and updated successfully' });
+    } catch (error) {
+      res.status(500).json({ error: 'Error inserting and updating data' });
+    }
+  } else {
+    res.status(400).json({ error: 'Invalid options' });
+  }
+}); */
+
+
+/* app.post('/saveToDatabase', async (req, res) => {
   const { Data, Options, TableName } = req.body; // Assuming Data, Options, and TableName are sent in the request body
 
   try {
@@ -201,7 +350,9 @@ app.post('/saveToDatabase', async (req, res) => {
 function serializeRow(row) {
   // This function serializes each row to remove circular references
   return JSON.parse(JSON.stringify(row));
-}
+} */
+
+
 
 let itemss = [];
 

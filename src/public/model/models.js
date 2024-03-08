@@ -31,7 +31,7 @@ const Employer = sequelize.define('Employer', {
     type: DataTypes.DATE
   }
 }, {
-  tableName: 'Employers',
+  tableName: 'Coordianteur',
   timestamps: false
 });
 
@@ -62,7 +62,7 @@ const Etudiant = sequelize.define('Etudiant', {
   },
  
 }, {
-  tableName: 'Etudiant', // Change this according to your table name
+  tableName: 'Encadrant', // Change this according to your table name
   timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt fields
 });
 
