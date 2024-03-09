@@ -1,5 +1,8 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
+
+
+let DB='';
 // Replace 'database_name', 'username', 'password', and 'host' with your MySQL database credentials
 const sequelize = new Sequelize('test', 'root', '', {
   host: 'localhost',
@@ -31,8 +34,8 @@ const Employer = sequelize.define('Employer', {
     type: DataTypes.DATE
   }
 }, {
-  tableName: 'Chef_dep',
-  timestamps: false
+  tableName: 'Gilles',
+  timestamps: true
 });
 
 
