@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <!-- MDB CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  
+  <style>
+    /* Custom CSS to center the container */
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 400px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <form>
+    <div class="tab-content">
+    
+     
+          <!-- Email input -->
+          <div class="text-center">
+            <h3>CONNECTION</h3>
+          </div>
+          
+          <div class="form-outline mb-4">
+            <input type="email" id="loginEmail" class="form-control"  required />
+            <label class="form-label" for="loginEmail" >Email </label>
+          </div>
+
+          <!-- Password input -->
+          <div class="form-outline position-relative mb-4">
+            <input type="password" id="loginPassword" class="form-control" required/>
+            <label class="form-label" for="loginPassword">Password</label>
+          </div>
+          
+          <!-- 2 column grid layout -->
+          <div class="row mb-4">
+            <div class="col-md-6 d-flex justify-content-center">
+              <!-- Checkbox -->
+              <div class="form-check mb-3 mb-md-0">
+                <input class="form-check-input" type="checkbox" value="" id="loginCheck" checked />
+                <label class="form-check-label" for="loginCheck"> Remember me </label>
+              </div>
+            </div>
+
+            <div class="col-md-6 d-flex justify-content-center">
+              <!-- Forgot password link -->
+             <label> <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot password?</a></label>
+            </div>
+          </div>
+
+          <!-- Submit button -->
+          <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+
+          <!-- Not a member link -->
+          <div class="text-center">
+            <p>Not a member? <a href="register">Register</a></p>
+          </div>
+       
+      </div>
+    </div>
+</form>
+  </div>
+
+                <%- include('../connexion/resetModalFade') %>
+
+  <!-- MDB JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.js"></script>
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function handleResetPasswordForm(event) {
+      event.preventDefault(); // Prevent form submission
+  
+      var email = document.getElementById('resetEmail').value;
+  
+      // Send an AJAX request to your Node.js backend
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/reset-password', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+  
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          var response = JSON.parse(xhr.responseText);
+          if (xhr.status === 200) {
+            // Success response from backend
+            var successMessage = response.message;
+            console.log(successMessage)
+            var successModal = new mdb.Modal(document.getElementById('successModal'));
+            successModal.show();
+            document.getElementById('resetEmailText').textContent = email;
+            document.getElementById('successMessage').textContent = successMessage;
+            
+          } else {
+            // Error response from backend
+            var errorMessage = response.error;
+            var errorModal = new mdb.Modal(document.getElementById('errorModal'));
+            errorModal.show();
+            document.getElementById('resetEmailText1').textContent = email;
+            document.getElementById('errorMessage').textContent = errorMessage;
+          }
+        }
+      };
+  
+      var data = JSON.stringify({ email: email });
+      xhr.send(data);
+    }
+  
+    document.getElementById('resetPasswordForm').addEventListener('submit', handleResetPasswordForm);
+            
+    document.getElementById('resetPasswordBtn').addEventListener('click', function(event) {
+      handleResetPasswordForm(event);
+    });
+  </script>
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.js"></script>
+   <script>
+     function togglePasswordVisibility(inputId) {
+       var input = document.getElementById(inputId);
+       input.type = input.type === 'password' ? 'text' : 'password';
+     }
+   </script>
+  
+</body>
+
+</html>

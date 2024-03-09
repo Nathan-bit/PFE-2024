@@ -172,7 +172,7 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'test'
+    database: 'fss'
 });
 
 app.post('/saveToDatabase', async (req, res) => {
@@ -305,6 +305,36 @@ app.post('/deleteRow', (req, res) => {
           res.send('Row deleted successfully');
       }
   });
+});
+
+
+app.get('/connexion/login', (req, res) => {
+  res.render('../connexion/login', { title: 'Login' });
+});
+app.get('/connexion/register', (req, res) => {
+  res.render('../connexion/register', { title: 'register' });
+});
+
+app.post('/reset-password', (req, res) => {
+  const email = req.body.email;
+
+  // Here you would implement your logic to send the email
+  // For demonstration purposes, let's assume it always succeeds
+  // You can replace this with your actual email sending logic
+  console.log(email);
+               if(email=='test@gmail.com')
+               {
+                let message =' Password reset instructions successfuly sent to :'
+                res.status(200).json({ message:message  });
+                console.log(message);
+                
+               }else{
+
+                 res.status(400).json({ error: " The address mail you provide doesn't exist.  Please try again." })
+               }
+
+  // Send success response
+ // res.status(200).json({ message: 'Password reset instructions sent successfully.' });
 });
 
 

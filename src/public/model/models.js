@@ -4,7 +4,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 let DB='';
 // Replace 'database_name', 'username', 'password', and 'host' with your MySQL database credentials
-const sequelize = new Sequelize('test', 'root', '', {
+const sequelize = new Sequelize('fss', 'root', '', {
   host: 'localhost',
   dialect: 'mysql',
   port: 3306

@@ -1,0 +1,63 @@
+<style>
+  .button-group button {
+    margin-right: 10px; /* Adjust the margin value according to your preference */
+}
+
+</style>
+
+<!-- Forgot password modal -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="forgotPasswordModalLabel">Forgot Password </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Reset password form -->
+          <form id="resetPasswordForm">
+            <div class="mb-3">
+              <label for="resetEmail" class="form-label"><b><h>Please enter your email address to reset password<h/></b></label>
+              <input type="email" class="form-control" id="resetEmail" aria-describedby="emailHelp" required>
+            </div>
+            <div class="button-group d-flex justify-content-between w-100">
+              <button type="submit" class="btn btn-primary">Reset</button>
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            </div>
+          </form>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <!-- Success message modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successModalLabel" style="color: green;">Success<h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        <b style="color: green;">  <span id="successMessage"></span>    <span id="resetEmailText"></span></b> 
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- Error message modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="errorModalLabel" style="color: red;">Error</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        <b style="color: red;">Error :<span id="resetEmailText1"></span> <span  id="errorMessage"></span>  </b> 
+        </div>
+      </div>
+    </div>
+  </div>
