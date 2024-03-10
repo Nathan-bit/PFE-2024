@@ -22,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
 
+
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
 
@@ -40,6 +41,21 @@ if (!fs.existsSync(uploadFolderPath)) {
 
 // Initialize multer
 const upload = multer({ dest: uploadFolderPath });
+
+//convert keys of object data to Uppercase
+async function convertObjectKeyToUpperCaseAsync( data) {
+  return new Promise(resolve => {
+      let newData = data.map(obj => {
+          let newObj = {};
+          for (let key in obj) {
+              newObj[key.toUpperCase()] = obj[key];
+          }
+          return newObj;
+      });
+      resolve(newData);
+  });
+}
+
 
 
 let dt = [];
@@ -177,6 +193,9 @@ const pool = mysql.createPool({
 
 app.post('/saveToDatabase', async (req, res) => {
   const { Data, Options, TableName } = req.body;
+  let d=Data
+  //convertObjectKeyToUpperCaseAsync(Data).then((data) => { d=data});
+
 
   try {
     // Check if TableName is missing
@@ -194,7 +213,7 @@ app.post('/saveToDatabase', async (req, res) => {
     // Handle data insertion based on the specified options
     if (Options === '1') {
       // Insert new data only
-      for (const item of Data) {
+      for (const item of d) {
         try {
           const query = 'INSERT INTO ?? SET ?';
           await pool.query(query, [TableName, item]);
@@ -210,7 +229,7 @@ app.post('/saveToDatabase', async (req, res) => {
       res.status(200).json({ message: 'Data inserted successfully.' });
     } else if (Options === '2') {
       // Insert new data and update existing data
-      for (const item of Data) {
+      for (const item of d) {
         const query = 'INSERT INTO ?? SET ? ON DUPLICATE KEY UPDATE ?';
         await pool.query(query, [TableName, item, item]);
       }
@@ -221,22 +240,6 @@ app.post('/saveToDatabase', async (req, res) => {
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
-
-
-
-
-let itemss = [];
-
-getDataFromTable('eMploYers')
-  .then(tableData => {
-    // Assign the retrieved data to itemss
-    itemss = tableData;
-    // You can use itemss here within this .then() block
-   // console.log('Data from table "Etudiant":', itemss);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
 
   app.post('/getDataFromTable', (req, res) => {
     const TableName = req.body.selectedValue;
@@ -263,15 +266,17 @@ app.post('/saveChanges', (req, res) => {
 
   // Log the received data
  // console.log('TableName:', TableName);
+ let d=editedData
+
 
   // Extract the ID and other updated fields from editedData
-  const { ID, ...updateData } = editedData;
+  const { EMAIL, ...updateData } = d;
 
   // Construct the SQL query to update the record
-  const sql = `UPDATE ${TableName} SET ? WHERE ID = ?`;
+  const sql = `UPDATE ${TableName} SET ? WHERE EMAIL = ?`;
 
   // Execute the query
-  pool.query(sql, [updateData, ID], (error, results) => {
+  pool.query(sql, [updateData, EMAIL], (error, results) => {
       if (error) {
           console.error('Error updating database:', error);
           res.status(500).send('Error updating database');
@@ -284,19 +289,21 @@ app.post('/saveChanges', (req, res) => {
 
 app.post('/deleteRow', (req, res) => {
   const { rowData, TableName } = req.body;
-
+   
   // Log the received data
-  console.log('Row data to delete:', rowData);
-  console.log('TableName:', TableName);
+  /* console.log('Row data to delete:', rowData);
+  console.log('TableName:', TableName); */
+  
+ 
 
   // Extract the ID of the row to delete
-  const { ID } = rowData;
+  const { EMAIL } = rowData;
 
   // Construct the SQL query to delete the record
-  const sql = `DELETE FROM ${TableName} WHERE ID = ?`;
+  const sql = `DELETE FROM ${TableName} WHERE EMAIL = ?`;
 
   // Execute the query
-  pool.query(sql, [ID], (error, results) => {
+  pool.query(sql, [EMAIL], (error, results) => {
       if (error) {
           console.error('Error deleting row from database:', error);
           res.status(500).send('Error deleting row from database');

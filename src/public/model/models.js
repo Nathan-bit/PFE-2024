@@ -12,62 +12,62 @@ const sequelize = new Sequelize('fss', 'root', '', {
 
 // Define the Employer model
 const Employer = sequelize.define('Employer', {
-  ID: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },  Nom: {
-    type: DataTypes.STRING
-  },
-  Prenom: {
-    type: DataTypes.STRING
-  },
-  Email: {
+  EMAIL: {
     type: DataTypes.STRING,
+    primaryKey: true,
     unique: true
   },
-
-  Departement: {
+      NOM: {
     type: DataTypes.STRING
   },
-  Date: {
+  PRENOM: {
+    type: DataTypes.STRING
+  },
+  SEXE: {
+    type: DataTypes.STRING,
+   
+  },
+
+  DEPARTEMENT: {
+    type: DataTypes.STRING
+  },
+  DATE: {
     type: DataTypes.DATE
   }
 }, {
-  tableName: 'Gilles',
+  tableName: 'Employers',
   timestamps: true
 });
 
 
 // Define the Etudiant model
 const Etudiant = sequelize.define('Etudiant', {
-  ID: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-    
-  },
-  
-  Nom: {
-    type: DataTypes.STRING
-  },
-  Prenom: {
-    type: DataTypes.STRING
-  },
-  Email: {
+  EMAIL: {
     type: DataTypes.STRING, 
+    primaryKey: true,
     unique: true
   },
-  Departement: {
+ 
+  
+  NOM: {
     type: DataTypes.STRING
   },
-  Date: {
+  PRENOM: {
+    type: DataTypes.STRING
+  },
+  SEXE: {
+    type: DataTypes.STRING,  
+  },
+  DEPARTEMENT: {
+    type: DataTypes.STRING
+  },
+  DATE: {
     type: DataTypes.DATE
   },
  
 }, {
-  tableName: 'Users', // Change this according to your table name
-  timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt fields
+  tableName: 'Etudiants', // Change this according to your table name
+  timestamps: true // Set to true if you want Sequelize to manage createdAt and updatedAt fields
 });
 
 // Function to get all tables and their structures
@@ -163,7 +163,7 @@ module.exports = {
   Employer,
   Etudiant,
   getAllTablesAndStructure,
- getDataFromTable
+  getDataFromTable
 
   //getAllTablesAndData
 };
